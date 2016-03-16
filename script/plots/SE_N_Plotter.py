@@ -47,5 +47,6 @@ class SE_N_Plotter(object):
         
 if __name__ == "__main__":
     plotter = SE_N_Plotter()
-    plotter.loadData("../..//data/output/SE_N_plot_data.txt")
+#     plotter.loadData("../..//data/output/SE_N_plot_data.txt")
+    plotter.loadData("../..//data/output/small/SE_N_plot_data.small.txt")
     plotter.plot()

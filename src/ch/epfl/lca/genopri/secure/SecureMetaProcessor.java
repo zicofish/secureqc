@@ -1,4 +1,4 @@
-package ch.epfl.lca.genopri.plain;
+package ch.epfl.lca.genopri.secure;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -11,8 +11,8 @@ import java.util.logging.Logger;
  * @author zhihuang
  *
  */
-public abstract class MetaProcessor {
-	private Logger logger = Logger.getLogger(MetaProcessor.class.getName());
+public abstract class SecureMetaProcessor {
+	private Logger logger = Logger.getLogger(SecureMetaProcessor.class.getName());
 	
 	/** Approximate number of SNPs in a study file. It is just used for initialization of a java list. */
 	public static final int APPROX_SIZE = 3000000;
@@ -34,17 +34,24 @@ public abstract class MetaProcessor {
 		"MAC"
 	};
 	
-	/** The directory containing all study files */
-	protected File studiesDir;
-	
 	/** A reader for the current study file */
 	private Scanner studyScanner = null;
 	
 	/** The current row separated into the corresponding columns */
 	private String[] lineFields = null;
 	
-	protected MetaProcessor(File dir){
-		studiesDir = dir;
+	protected SecureMetaProcessor(File study){
+		try {
+			studyScanner = new Scanner(study);
+		} catch (FileNotFoundException e) {
+			logger.log(Level.WARNING, "Cannot find the study file '" + study + "'.");
+			System.exit(1);
+		}
+		String[] headers = studyScanner.nextLine().split("\\s+");
+		if(!matchHeaders(headers)){
+			logger.log(Level.WARNING, "The headers of study '" + study + "' does not match the expected headers.");
+			System.exit(1);
+		}
 	}
 	
 	
@@ -61,26 +68,6 @@ public abstract class MetaProcessor {
 		return true;
 	}
 	
-	
-	/** 
-	 * Create a reader for the study file, and check its headers.
-	 * @param study
-	 * @return true if the reader is created successfully and headers match with expected ones.
-	 */
-	public boolean processStudy(File study){
-		try {
-			studyScanner = new Scanner(study);
-		} catch (FileNotFoundException e) {
-			logger.log(Level.WARNING, "Cannot find the study file '" + study + "'.");
-			return false;
-		}
-		String[] headers = studyScanner.nextLine().split("\\s+");
-		if(!matchHeaders(headers)){
-			logger.log(Level.WARNING, "The headers of study '" + study + "' does not match the expected headers.");
-			return false;
-		}
-		return true;
-	}
 	
 	/** 
 	 * Read the next valid row. A row is valid if and only if it has expected number of fields.
@@ -141,22 +128,5 @@ public abstract class MetaProcessor {
 	 */
 	public double getP(){
 		return Double.valueOf(lineFields[11]);
-	}
-	
-	public abstract void parseData();
-	
-	public abstract void write(File output);
-	
-	class StudyFileFilter implements FileFilter{
-
-		@Override
-		public boolean accept(File pathname) {
-			if(pathname.getName().endsWith(".txt"))
-				return true;
-//			if(pathname.getName().equals("CLEAN.BSN.HEIGHT.MEN.GT50.20101022.txt"))
-//				return true;
-			return false;
-		}
-		
 	}
 }
