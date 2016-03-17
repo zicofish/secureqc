@@ -34,8 +34,8 @@ public abstract class MetaProcessor {
 		"MAC"
 	};
 	
-	/** The directory containing all study files */
-	protected File studiesDir;
+	/** The study file */
+	protected File study;
 	
 	/** A reader for the current study file */
 	private Scanner studyScanner = null;
@@ -43,8 +43,19 @@ public abstract class MetaProcessor {
 	/** The current row separated into the corresponding columns */
 	private String[] lineFields = null;
 	
-	protected MetaProcessor(File dir){
-		studiesDir = dir;
+	protected MetaProcessor(File study){
+		this.study = study;
+		try {
+			studyScanner = new Scanner(study);
+		} catch (FileNotFoundException e) {
+			logger.log(Level.WARNING, "Cannot find the study file '" + study + "'.");
+			System.exit(1);
+		}
+		String[] headers = studyScanner.nextLine().split("\\s+");
+		if(!matchHeaders(headers)){
+			logger.log(Level.WARNING, "The headers of study '" + study + "' does not match the expected headers.");
+			System.exit(1);
+		}
 	}
 	
 	
@@ -58,27 +69,6 @@ public abstract class MetaProcessor {
 		for(int i = 0; i < expectedHeaders.length; i++)
 			if(!expectedHeaders[i].equals(headers[i]))
 				return false;
-		return true;
-	}
-	
-	
-	/** 
-	 * Create a reader for the study file, and check its headers.
-	 * @param study
-	 * @return true if the reader is created successfully and headers match with expected ones.
-	 */
-	public boolean processStudy(File study){
-		try {
-			studyScanner = new Scanner(study);
-		} catch (FileNotFoundException e) {
-			logger.log(Level.WARNING, "Cannot find the study file '" + study + "'.");
-			return false;
-		}
-		String[] headers = studyScanner.nextLine().split("\\s+");
-		if(!matchHeaders(headers)){
-			logger.log(Level.WARNING, "The headers of study '" + study + "' does not match the expected headers.");
-			return false;
-		}
 		return true;
 	}
 	
@@ -143,20 +133,12 @@ public abstract class MetaProcessor {
 		return Double.valueOf(lineFields[11]);
 	}
 	
-	public abstract void parseData();
+	/**
+	 * Process the study file.
+	 */
+	public abstract void runProcessor();
 	
-	public abstract void write(File output);
-	
-	class StudyFileFilter implements FileFilter{
-
-		@Override
-		public boolean accept(File pathname) {
-			if(pathname.getName().endsWith(".txt"))
-				return true;
-//			if(pathname.getName().equals("CLEAN.BSN.HEIGHT.MEN.GT50.20101022.txt"))
-//				return true;
-			return false;
-		}
-		
+	public String toString(){
+		return "Default: MetaProcessor.";
 	}
 }

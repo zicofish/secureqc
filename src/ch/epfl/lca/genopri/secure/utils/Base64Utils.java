@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.util.encoders.Base64;
 
-public class Utils {
-	private static Logger logger = Logger.getLogger(Utils.class.getName());
+public class Base64Utils {
+	private static Logger logger = Logger.getLogger(Base64Utils.class.getName());
 	
 	public static int fromBase64ToInt(String str){
 		byte[] intBytes = Base64.decode(str);

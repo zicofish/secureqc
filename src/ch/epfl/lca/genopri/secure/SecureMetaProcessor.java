@@ -7,6 +7,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ch.epfl.lca.genopri.secure.utils.Base64Utils;
+
 /**
  * @author zhihuang
  *
@@ -119,8 +121,8 @@ public abstract class SecureMetaProcessor {
 	/**
 	 * Estimated standard error on the estimate of the effect size for the current SNP (the current row)
 	 */
-	public double getSE(){
-		return Double.valueOf(lineFields[10]);
+	public int getSE(){
+		return Base64Utils.fromBase64ToInt(lineFields[10]);
 	}
 	
 	/**

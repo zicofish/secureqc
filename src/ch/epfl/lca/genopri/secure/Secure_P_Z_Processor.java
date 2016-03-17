@@ -1,35 +1,20 @@
 package ch.epfl.lca.genopri.secure;
 
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.oblivm.backend.circuits.BitonicSortLib;
 import com.oblivm.backend.flexsc.CompEnv;
-import com.oblivm.backend.rand.ISAACProvider;
 import com.oblivm.backend.util.EvaRunnable;
 import com.oblivm.backend.util.GenRunnable;
 import com.oblivm.backend.util.Utils;
 
-public class Secure_SE_N_Processor extends SecureMetaProcessor{
-	private static Logger logger = Logger.getLogger(Secure_SE_N_Processor.class.getName());
-	private static int SE_BIT_LEN = 32;
+public class Secure_P_Z_Processor extends SecureMetaProcessor{
+	private static Logger logger = Logger.getLogger(Secure_P_Z_Processor.class.getName());
 	
-	protected Secure_SE_N_Processor(File study) {
+	protected Secure_P_Z_Processor(File study) {
 		super(study);
-	}
-	
-	static public<T> T[] compute(CompEnv<T> gen, T[][] inputA, T[][] inputB){
-		BitonicSortLib<T> lib = new  BitonicSortLib<T>(gen);
-		T[][] A_xor_B = gen.newTArray(inputA.length, inputA[0].length);
-		for(int j = 0; j < inputA.length; j++)
-			A_xor_B[j] = lib.xor(inputA[j], inputB[j]);
-		lib.sort(A_xor_B, lib.SIGNAL_ONE);
-		return A_xor_B[inputA.length / 2];
 	}
 
 	public static class Generator<T> extends GenRunnable<T>{
@@ -37,13 +22,13 @@ public class Secure_SE_N_Processor extends SecureMetaProcessor{
 		/** The study */
 		String studyName;
 		
-		/** The maximum sample size of the study */
-		Double Nmax;
+		/** The reported P values */
+		T[][] pValues;
 		
-		/** The median standard error of the study */
-		T[] medianSE;
+		/** The Z-statistics based on reported beta estimate and standard error */
+		T[][] zStats;
 		
-		/** Generator's input (list of SE shares) */
+		/** Generator's input (list of p-value shares) */
 		T[][] inputA;
 		
 		/** Evaluator's input. Because this class is a Generator, inputB will contain random elements. */
@@ -102,7 +87,7 @@ public class Secure_SE_N_Processor extends SecureMetaProcessor{
 		/** The median standard error of the study */
 		T[] medianSE;
 		
-		/** Generator's input. Because this class is an Evaluator, inputA will contain random elements.  */
+		/** Generator's input  */
 		T[][] inputA;
 		
 		/** Evaluator's input (list of SE shares). */
