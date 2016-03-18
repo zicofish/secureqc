@@ -2,6 +2,7 @@ package ch.epfl.lca.genopri.plain;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,4 +51,44 @@ public class P_Z_Processor extends MetaProcessor{
 		return sb.toString();
 	}
 	
+	public String toSortedString(){
+		P_Z_Sorter sorter = new P_Z_Sorter(pValues, compPValues);
+		Tuple[] array = sorter.sort();	
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < 100; i++){
+			sb.append(array[i].pValue + "\t" + array[i].compPValue + "\n");
+		}
+		return sb.toString();
+	}
+	
+	class P_Z_Sorter {
+		Tuple[] array = null;
+		P_Z_Sorter(List<Double> pValues, List<Double> compPValues){
+			array = new Tuple[pValues.size()];
+			for(int i = 0; i < array.length; i++)
+				array[i] = new Tuple(pValues.get(i), compPValues.get(i));
+		}
+		
+		public Tuple[] sort(){
+			Arrays.sort(array);
+			return array;
+		}
+	}
+	
+	class Tuple implements Comparable<Tuple>{
+		Double pValue;
+		Double compPValue;
+		Tuple(Double a, Double b){
+			pValue = a;
+			compPValue = b;
+		}
+		@Override
+		public int compareTo(Tuple o) {
+			if(pValue < o.pValue) return -1;
+			if(pValue > o.pValue) return 1;
+			if(compPValue < o.compPValue) return -1;
+			if(compPValue > o.compPValue) return 1;
+			return 0;
+		}
+	}
 }

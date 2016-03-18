@@ -16,6 +16,18 @@ import ch.epfl.lca.genopri.secure.utils.Base64Utils;
 public abstract class SecureMetaProcessor {
 	private Logger logger = Logger.getLogger(SecureMetaProcessor.class.getName());
 	
+	/** bit length for fix-point representation of a standard error */
+	protected static final int SE_WIDTH = 32;
+	protected static final int SE_OFFSET = 24;
+	
+	/** bit length for fix-point representation of a beta estimate */
+	protected static final int BETA_WIDTH = 32;
+	protected static final int BETA_OFFSET = 24;
+	
+	/** bit length for fix-point representation of a p value */
+	protected static final int P_WIDTH = 64;
+	protected static final int P_OFFSET = 62;
+	
 	/** Approximate number of SNPs in a study file. It is just used for initialization of a java list. */
 	public static final int APPROX_SIZE = 3000000;
 	
@@ -107,15 +119,15 @@ public abstract class SecureMetaProcessor {
 	/**
 	 * The effect allele frequency (range 0-1) for the current SNP (the current row)
 	 */
-	public double getEAF(){
-		return Double.valueOf(lineFields[5]);
+	public int getEAF(){
+		return Base64Utils.fromBase64ToInt(lineFields[5]);
 	}
 	
 	/**
 	 * Beta estimate (effect size) for the current SNP (the current row)
 	 */
-	public double getBETA(){
-		return Double.valueOf(lineFields[9]);
+	public int getBETA(){
+		return Base64Utils.fromBase64ToInt(lineFields[9]);
 	}
 	
 	/**
@@ -128,7 +140,7 @@ public abstract class SecureMetaProcessor {
 	/**
 	 * Significance of the variant association for the current SNP (the current row)
 	 */
-	public double getP(){
-		return Double.valueOf(lineFields[11]);
+	public Long getP(){
+		return Base64Utils.fromBase64ToLong(lineFields[11]);
 	}
 }

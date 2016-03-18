@@ -17,7 +17,6 @@ import com.oblivm.backend.util.Utils;
 
 public class Secure_SE_N_Processor extends SecureMetaProcessor{
 	private static Logger logger = Logger.getLogger(Secure_SE_N_Processor.class.getName());
-	private static int SE_BIT_LEN = 32;
 	
 	protected Secure_SE_N_Processor(File study) {
 		super(study);
@@ -67,10 +66,10 @@ public class Secure_SE_N_Processor extends SecureMetaProcessor{
 			smp.closeStudy();
 			boolean[][] temp = new boolean[standardErrors.size()][];
 			for(int i = 0; i < standardErrors.size(); i++)
-				temp[i] = Utils.fromInt(standardErrors.get(i), SE_BIT_LEN);
+				temp[i] = Utils.fromInt(standardErrors.get(i), SE_WIDTH);
 			
 			inputA = gen.inputOfAlice(temp);
-			inputB = gen.inputOfBob(new boolean[temp.length][SE_BIT_LEN]);
+			inputB = gen.inputOfBob(new boolean[temp.length][SE_WIDTH]);
 			
 			logger.log(Level.INFO, "---------- Generator: End preparing input ----------");
 		}
@@ -126,9 +125,9 @@ public class Secure_SE_N_Processor extends SecureMetaProcessor{
 			smp.closeStudy();
 			boolean[][] temp = new boolean[standardErrors.size()][];
 			for(int i = 0; i < standardErrors.size(); i++)
-				temp[i] = Utils.fromInt(standardErrors.get(i), SE_BIT_LEN);
+				temp[i] = Utils.fromInt(standardErrors.get(i), SE_WIDTH);
 
-			inputA = gen.inputOfAlice(new boolean[temp.length][SE_BIT_LEN]);
+			inputA = gen.inputOfAlice(new boolean[temp.length][SE_WIDTH]);
 			inputB = gen.inputOfBob(temp);
 			
 			logger.log(Level.INFO, "---------- Evaluator: End preparing input ----------");
