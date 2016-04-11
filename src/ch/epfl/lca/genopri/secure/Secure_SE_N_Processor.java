@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.oblivm.backend.circuits.BitonicSortLib;
-import com.oblivm.backend.flexsc.CompEnv;
-import com.oblivm.backend.rand.ISAACProvider;
-import com.oblivm.backend.util.EvaRunnable;
-import com.oblivm.backend.util.GenRunnable;
-import com.oblivm.backend.util.Utils;
+import util.EvaRunnable;
+import util.GenRunnable;
+import util.Utils;
+import circuits.BitonicSortLib;
+import flexsc.CompEnv;
+
 
 public class Secure_SE_N_Processor extends SecureMetaProcessor{
 	private static Logger logger = Logger.getLogger(Secure_SE_N_Processor.class.getName());

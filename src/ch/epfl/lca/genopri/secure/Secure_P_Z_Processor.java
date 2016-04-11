@@ -8,12 +8,13 @@ import java.util.logging.Logger;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
-import com.oblivm.backend.circuits.BitonicSortLib;
-import com.oblivm.backend.circuits.arithmetic.FixedPointLib;
-import com.oblivm.backend.flexsc.CompEnv;
-import com.oblivm.backend.util.EvaRunnable;
-import com.oblivm.backend.util.GenRunnable;
-import com.oblivm.backend.util.Utils;
+import util.EvaRunnable;
+import util.GenRunnable;
+import util.Utils;
+import circuits.BitonicSortLib;
+import circuits.arithmetic.FixedPointLib;
+import flexsc.CompEnv;
+
 
 public class Secure_P_Z_Processor extends SecureMetaProcessor{
 	private static Logger logger = Logger.getLogger(Secure_P_Z_Processor.class.getName());

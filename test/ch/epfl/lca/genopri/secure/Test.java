@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Security;
 
-import com.oblivm.backend.rand.ISAACProvider;
+import rand.ISAACProvider;
 
 public class Test {
 	static SecureRandom rnd = null;
