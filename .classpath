@@ -16,7 +16,6 @@
 			<attribute name="javadoc_location" value="jar:file:/Users/zhihuang/work/LCA1/projects/secure_meta-analysis/secureqc/lib/commons-math3-3.6/commons-math3-3.6-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/graphsc.jar"/>
 	<classpathentry kind="lib" path="lib/FlexSC.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

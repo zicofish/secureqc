@@ -1,0 +1,16 @@
+For data:
+
+rs7359233
+Very different p-values between
+CLEAN.B58C-WTCCC.HEIGHT.MEN.LE50.UNIFORM.giant-association-results-20090323.txt
+and other studies
+And also the effect allele is different among studies, some studies use 'G', others use 'T'.
+
+
+For FlexSC:
+
+The OFFLINE mode in flexsc.Mode is useless. It can be seen from getMode: when the optionValue equals “OFFLINE”, it actually returns OPT mode, but not OFFLINE mode.
+
+Pay attention to the class flex.Flag, where we can find several static configurations. I think “offline” is useless, because whenever it is used, they always first condition on Mode.OFFLINE. And because Mode.OFFLINE is useless, Flag.offline is useless.
+
+Pay attention to Flag.FakeOT. Don’t set it to “true”, otherwise you will run the garbled circuits without actually using oblivious transfer. See gc.GCGenComp constructor for details.
