@@ -33,7 +33,7 @@ if __name__ == "__main__":
     caseMAF = open("../../data/simulated/caseMAF.txt")
     mafs = [float(line.split()[1]) for line in caseMAF]
     sensitivity = 1.0/1000
-    epsilon = 0.1
+    epsilon = 1
     dp = DifferentialPrivacy(sensitivity, epsilon)
     noisy = dp.sanitize(mafs)
     noisy[noisy < 0.05] = 0.05

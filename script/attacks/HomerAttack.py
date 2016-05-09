@@ -36,7 +36,7 @@ class HomerAttack(Attack):
 
 def performAttack(numOfVictims, numOfSNPs, sanitizationSuffix):
     attack = HomerAttack()
-    attack.loadData("../../data/simulated/refMAF.txt", "../../data/simulated/caseMAF" + sanitizationSuffix + ".txt")
+    attack.loadData("../../data/simulated/refMAF.txt", "../../data/simulated/caseMAF_" + sanitizationSuffix + ".txt")
     case = open("../../data/simulated/case.txt")
     caseStats = []
     for i in range(numOfVictims):
