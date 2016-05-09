@@ -19,6 +19,7 @@ def packToBase64(fixPointNumber, width):
     s = struct.pack("<"+typeStr, fixPointNumber)
     return base64.b64encode(s)
 
+
 if __name__ == "__main__":
     floatNumber = float("8.851200e-01")
     width = 64

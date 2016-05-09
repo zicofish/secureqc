@@ -52,7 +52,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 			 */
 			zStats[j] = sortLib.absolute(fpLib.div(A_xor_B_BETA[j], A_xor_B_SE[j]));
 		}
-		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000 +  " seconds ==============");
+		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
 		T[] P_preserved_bits_signal = sortLib.toSignals(P_preserved_bits),
 				Z_preserved_bits_signal = sortLib.toSignals(Z_preserved_bits);
 		
@@ -75,7 +75,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 				curPreservedSignal = sortLib.conditionalIncreament(curPreservedSignal, preservedFlag);
 			}
 		}
-		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000 +  " seconds ==============");
+		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
 		
 		/*
 		 * Preserve only a predefined number of bits (i.e.e, the precision) for the z statistics
@@ -96,7 +96,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 				curPreservedSignal = sortLib.conditionalIncreament(curPreservedSignal, preservedFlag);
 			}
 		}
-		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000 +  " seconds ==============");
+		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
 		
 		/*
 		 * Concatenate the P values and z statistics
@@ -108,7 +108,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 			System.arraycopy(zStats[j], 0, pz[j], 0, zStats[j].length);
 			System.arraycopy(A_xor_B_P[j], 0, pz[j], zStats[j].length, A_xor_B_P[j].length);
 		}
-		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000 +  " seconds ==============");
+		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
 		
 		/*
 		 * Sort the p-z value pairs
@@ -116,7 +116,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 		logger.log(Level.INFO, "============== Sorting P-Z value pairs ==============");
 		timing = System.currentTimeMillis();
 		sortLib.sort(pz, sortLib.SIGNAL_ONE);
-		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000 +  " seconds ==============");
+		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
 		
 		/*
 		 * De-duplicate
@@ -131,7 +131,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 			pz[j] = sortLib.mux(pz[j], maxPair, eqSignal);
 			prevPair = sortLib.mux(pz[j], prevPair, eqSignal);
 		}
-		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000 +  " seconds ==============");
+		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
 		
 		/*
 		 * Move all duplicated items to the end
@@ -139,7 +139,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 		logger.log(Level.INFO, "============== Moving duplicated P-Z value pairs to the end ==============");
 		timing = System.currentTimeMillis();
 		sortLib.sort(pz, sortLib.SIGNAL_ONE);
-		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000 +  " seconds ==============");
+		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
 		
 		/* We could also trim the duplicated items, but that requires another round of secure computation,
 		 * we would like to avoid that. We just return the entire results and let the user delete those elements
