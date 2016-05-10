@@ -10,6 +10,6 @@ for ((i=0; i<=`expr ${#numOfSNPs[@]} - 1`; i++))
 do
 	for ((j=0; j<=`expr ${#suffix[@]} - 1`; j++))
 	do
-		python HomerAttack.py ${numOfSNPs[i]} ${suffix[j]} &
+		(python HomerAttack.py ${numOfSNPs[i]} ${suffix[j]} &)
 	done
 done
