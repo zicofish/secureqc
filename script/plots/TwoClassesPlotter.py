@@ -41,7 +41,5 @@ class TwoClassesPlotter(object):
         
 if __name__ == "__main__":
     plotter = TwoClassesPlotter()
-#     plotter.loadData("../../data/simulated/testAttackStats_dp0.1.txt", "../../data/simulated/caseAttackStats_dp0.1.txt")
-    plotter.loadData("../../data/simulated/testAttackStats.txt", "../../data/simulated/caseAttackStats.txt")
-#     plotter.loadData("../../data/simulated/testAttackStats_dp0.05.txt", "../../data/simulated/caseAttackStats_dp0.05.txt")
+    plotter.loadData("../../data/simulated/testAttackStats_10000SNPs_dp0.01.txt", "../../data/simulated/caseAttackStats_10000SNPs_dp0.01.txt")
     plotter.plot("Participant Index", "Test Statistic")

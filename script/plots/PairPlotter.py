@@ -35,5 +35,7 @@ class PairPlotter(object):
         
 if __name__ == "__main__":
     plotter = PairPlotter()
-    plotter.loadData("../../data/simulated/caseMAF_dp0.1.txt", "../../data/simulated/refMAF.txt")
+#     plotter.loadData("../../data/simulated/caseMAF_dp0.05.txt", "../../data/simulated/refMAF.txt")
+#     plotter.loadData("../../data/simulated/caseMAF_dp0.1_delta0.01.txt", "../../data/simulated/refMAF.txt")
+    plotter.loadData("../../data/simulated/caseMAF_dp0.1_delta0.05.txt", "../../data/simulated/refMAF.txt")
     plotter.plot("Case Allele Frequency", "Reference Allele Frequency")
