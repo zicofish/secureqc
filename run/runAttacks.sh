@@ -5,8 +5,8 @@
 #numOfSNPs=(1000 5000 10000 50000 100000 500000 1000000)
 #suffix=("clear" "dp1" "dp0.5" "dp0.1" "dp0.05" "dp0.01")
 numOfSNPs=(1000 5000)
-suffix=("dp0.1_delta0.01" "dp0.1_delta0.05")
-
+#suffix=("dp0.1_delta0.01" "dp0.1_delta0.05")
+suffix=("dp0.1_delta0.001" "dp0.1_delta0.005" "dp0.05_delta0.01" "dp0.05_delta0.001" "dp0.05_delta0.05" "dp0.05_delta0.005")
 
 cd ../script/attacks
 for ((i=0; i<=`expr ${#numOfSNPs[@]} - 1`; i++))

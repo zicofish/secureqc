@@ -56,7 +56,7 @@ def addGaussianNoises():
     caseMAF = open("../../data/simulated/caseMAF_clear.txt")
     mafs = [float(line.split()[1]) for line in caseMAF]
     sensitivity = 1.0/1000
-    epsilon = 0.1
+    epsilon = 0.05
     delta = 0.05
     dp = DifferentialPrivacy(sensitivity, epsilon, delta)
     noisy = dp.sanitize(mafs, "gaussian")
