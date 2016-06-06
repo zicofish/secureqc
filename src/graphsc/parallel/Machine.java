@@ -40,6 +40,7 @@ public class Machine {
 	private int logMachines;
 	private boolean isGen;
 	private int inputLength;
+	private String input;
 	private Gadget gadget;
 	private CompEnv env;
 	Network[] peersUp;
@@ -52,12 +53,14 @@ public class Machine {
 			int totalMachines,
 			boolean isGen,
 			int inputLength,
-			int peerPort) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+			int peerPort,
+			String input) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		this.garblerId = garblerId;
 		this.totalMachines = totalMachines;
 		this.isGen = isGen;
 		this.inputLength = inputLength;
 		this.peerPort = peerPort;
+		this.input = input;
 		this.logMachines = Utils.log2(this.totalMachines);
 		if (logMachines > 0) {
 			this.peersUp = new Network[logMachines];
@@ -173,7 +176,9 @@ public class Machine {
 		options.addOption("m", "mode", true, "Mode");
 		options.addOption("peer", "peerBasePort", true, "Peer base port");
 		options.addOption("offline", "offline", true, "Whether it is offline; only applicable to offline mode");
-
+		// Add an option to specify input file
+		options.addOption("input", "input", true, "Input file");
+		
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = parser.parse(options, args);
 
@@ -191,7 +196,8 @@ public class Machine {
 				Integer.parseInt(cmd.getOptionValue("totalGarblers")) /* machines */,
 				Boolean.parseBoolean(cmd.getOptionValue("isGen")) /* isGen */,
 				Integer.parseInt(cmd.getOptionValue("inputLength")) /* inputLength */,
-				Integer.parseInt(cmd.getOptionValue("peerBasePort")) /* peerPort */);
+				Integer.parseInt(cmd.getOptionValue("peerBasePort")) /* peerPort */,
+				cmd.getOptionValue("input"));
 
 		// Connect to the other party
 		machine.env = machine.connectToOtherParty(mode, compPoolGenEvaPort);
@@ -266,5 +272,9 @@ public class Machine {
 
 	public int getInputLength() {
 		return inputLength;
+	}
+	
+	public String getInput() {
+		return input;
 	}
 }

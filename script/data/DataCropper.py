@@ -34,5 +34,5 @@ class DataCropper(object):
             self.cropFile(join(inDirPath, f), join(outDirPath, f[:-4] + ".small" + f[-4:]))
 
 if __name__ == "__main__":
-    cropper = DataCropper(1001)
+    cropper = DataCropper(1025)
     cropper.cropFilesInDir("../../data/zk_jfellay/GIANT_toy", "../../data/zk_jfellay/GIANT_toy/small", r".*\.txt$")

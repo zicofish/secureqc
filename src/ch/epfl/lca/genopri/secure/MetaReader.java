@@ -1,32 +1,34 @@
 package ch.epfl.lca.genopri.secure;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import ch.epfl.lca.genopri.secure.utils.Base64Utils;
+import ch.epfl.lca.genopri.secure.utils.Debugger;
 
 /**
  * @author zhihuang
  *
  */
-public abstract class SecureMetaProcessor {
-	private Logger logger = Logger.getLogger(SecureMetaProcessor.class.getName());
+public class MetaReader implements GenomicFileCheck{
 	
 	/** bit length for fix-point representation of a standard error */
-	protected static final int SE_WIDTH = 32;
-	protected static final int SE_OFFSET = 24;
+	public static final int SE_WIDTH = 32;
+	public static final int SE_OFFSET = 24;
 	
 	/** bit length for fix-point representation of a beta estimate */
-	protected static final int BETA_WIDTH = 32;
-	protected static final int BETA_OFFSET = 24;
+	public static final int BETA_WIDTH = 32;
+	public static final int BETA_OFFSET = 24;
 	
 	/** bit length for fix-point representation of a p value */
-	protected static final int P_WIDTH = 64;
-	protected static final int P_OFFSET = 62;
+	public static final int P_WIDTH = 64;
+	public static final int P_OFFSET = 62;
+	
+	/** bit length for fix-point representation of a eaf value */
+	public static final int EAF_WIDTH = 32;
+	public static final int EAF_OFFSET = 30;
 	
 	/** Approximate number of SNPs in a study file. It is just used for initialization of a java list. */
 	public static final int APPROX_SIZE = 3000000;
@@ -54,34 +56,19 @@ public abstract class SecureMetaProcessor {
 	/** The current row separated into the corresponding columns */
 	private String[] lineFields = null;
 	
-	protected SecureMetaProcessor(File study){
+	public MetaReader(File study){
 		try {
 			studyScanner = new Scanner(study);
 		} catch (FileNotFoundException e) {
-			logger.log(Level.WARNING, "Cannot find the study file '" + study + "'.");
+			Debugger.debug(Level.SEVERE, "Cannot find the study file '" + study + "'.");
 			System.exit(1);
 		}
 		String[] headers = studyScanner.nextLine().split("\\s+");
-		if(!matchHeaders(headers)){
-			logger.log(Level.WARNING, "The headers of study '" + study + "' does not match the expected headers.");
+		if(!matchHeaders(expectedHeaders, headers)){
+			Debugger.debug(Level.SEVERE, "The headers of study '" + study + "' does not match the expected headers.");
 			System.exit(1);
 		}
 	}
-	
-	
-	/**
-	 * Check whether the headers match the expected headers in both number and order.
-	 * @param headers
-	 * @return true if matched, false otherwise.
-	 */
-	public boolean matchHeaders(String[] headers){
-		if(expectedHeaders.length != headers.length) return false;
-		for(int i = 0; i < expectedHeaders.length; i++)
-			if(!expectedHeaders[i].equals(headers[i]))
-				return false;
-		return true;
-	}
-	
 	
 	/** 
 	 * Read the next valid row. A row is valid if and only if it has expected number of fields.
@@ -93,7 +80,7 @@ public abstract class SecureMetaProcessor {
 			lineFields = line.split("\\s+");
 			if(lineFields.length == 0) continue;	// SKIP empty lines
 			if(lineFields.length != expectedHeaders.length){
-				logger.log(Level.WARNING, "The line '" + line + "' does not have expected number of fields.");
+				Debugger.debug(Level.WARNING, "The line '" + line + "' does not have expected number of fields.");
 				continue;
 			}
 			return true;
@@ -108,6 +95,26 @@ public abstract class SecureMetaProcessor {
 		studyScanner.close();
 	}
 	
+	/**
+	 * Marker name
+	 */
+	public String getMarker(){
+		return lineFields[0];
+	}
+	
+	/**
+	 * Effect allele
+	 */
+	public String getEffectAllele(){
+		return lineFields[3];
+	}
+	
+	/**
+	 * Non-effect allele
+	 */
+	public String getNonEffectAllele(){
+		return lineFields[4];
+	}
 	
 	/**
 	 * The number of subjects analyzed for the current SNP (the current row)

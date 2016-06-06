@@ -7,12 +7,14 @@ import java.lang.reflect.InvocationTargetException;
 import network.Network;
 import util.Utils;
 import flexsc.CompEnv;
+import flexsc.Party;
 import gc.BadLabelException;
 
 public class SortGadget<T> extends Gadget<T> {
 
 	private GraphNode<T>[] nodes;
 	private NodeComparator<T> comp;
+	private int nodeLength;
 
 	public SortGadget(CompEnv<T> env, Machine machine) {
 		super(env, machine);
@@ -21,6 +23,7 @@ public class SortGadget<T> extends Gadget<T> {
 	public SortGadget<T> setInputs(GraphNode<T>[] nodes, NodeComparator<T> comp) {
 		this.nodes = nodes;
 		this.comp = comp;
+		this.nodeLength = nodes[0].flatten(env).length;
 		return this;
 	}
 
@@ -81,7 +84,7 @@ public class SortGadget<T> extends Gadget<T> {
 			channel.flush();
 			for (int k = 0; k < curTransfer; k++, j++) {
 				try {
-					a[j] = (GraphNode<T>) nodes.getClass().getComponentType().getConstructor(new Class[]{CompEnv.class}).newInstance(env);
+					a[j] = (GraphNode<T>) nodes.getClass().getComponentType().getConstructor(new Class[]{CompEnv.class, int.class}).newInstance(env, this.nodeLength);
 				} catch (IllegalArgumentException | InvocationTargetException
 						| NoSuchMethodException | SecurityException
 						| InstantiationException | IllegalAccessException e) {

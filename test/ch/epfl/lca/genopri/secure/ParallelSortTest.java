@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
+import ch.epfl.lca.genopri.secure.parallel.DataGraphNode;
 import flexsc.CompEnv;
 import flexsc.Party;
 import gc.BadLabelException;
@@ -81,7 +82,7 @@ public class ParallelSortTest<T> extends Gadget<T>{
 			 bw = new BufferedWriter(new FileWriter("out/secureSort" + machine.getInputLength() + ".out." + garblerId));
 		}
 		for (int i = 0; i < nodes.length; i++) {
-			int u = Utils.toInt(env.outputToAlice(nodes[i].data));
+			int u = Utils.toInt(env.outputToAlice(nodes[i].getData()));
 			env.channel.flush();
 			if (Party.Alice.equals(env.party)) {
 				bw.write(u + "\n");

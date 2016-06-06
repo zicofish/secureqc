@@ -1,0 +1,2 @@
+study	../data/zk_jfellay/GIANT_toy/small/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.small.txt
+ref_af	../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt

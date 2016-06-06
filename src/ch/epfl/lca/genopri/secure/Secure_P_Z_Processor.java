@@ -16,7 +16,7 @@ import circuits.arithmetic.FixedPointLib;
 import flexsc.CompEnv;
 
 
-public class Secure_P_Z_Processor extends SecureMetaProcessor{
+public class Secure_P_Z_Processor extends MetaReader{
 	private static Logger logger = Logger.getLogger(Secure_P_Z_Processor.class.getName());
 	
 	private static final int P_preserved_bits = 10;
@@ -53,12 +53,13 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 			zStats[j] = sortLib.absolute(fpLib.div(A_xor_B_BETA[j], A_xor_B_SE[j]));
 		}
 		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
-		T[] P_preserved_bits_signal = sortLib.toSignals(P_preserved_bits),
-				Z_preserved_bits_signal = sortLib.toSignals(Z_preserved_bits);
 		
 		/*
 		 * Preserve only a predefined number of bits (i.e., the precision) for the P values
 		 */
+		T[] P_preserved_bits_signal = sortLib.toSignals(P_preserved_bits),
+				Z_preserved_bits_signal = sortLib.toSignals(Z_preserved_bits);
+		
 		logger.log(Level.INFO, "============== Truncating precision of P values ==============");
 		timing = System.currentTimeMillis();
 		for(int j = 0; j < A_xor_B_P.length; j++){
@@ -166,7 +167,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 		@Override
 		public void prepareInput(CompEnv<T> gen) throws Exception {
 			studyName = args[0];
-			SecureMetaProcessor smp = new Secure_P_Z_Processor(new File(studyName));
+			MetaReader smp = new Secure_P_Z_Processor(new File(studyName));
 			logger.log(Level.INFO, "++++++++++ Generator: Preparing input from study file '"
 					+ studyName
 					+ "' ++++++++++");
@@ -237,7 +238,7 @@ public class Secure_P_Z_Processor extends SecureMetaProcessor{
 		@Override
 		public void prepareInput(CompEnv<T> gen) throws Exception {
 			studyName = args[0];
-			SecureMetaProcessor smp = new Secure_P_Z_Processor(new File(studyName));
+			MetaReader smp = new Secure_P_Z_Processor(new File(studyName));
 			logger.log(Level.INFO, "++++++++++ Evaluator: Preparing input from study file '"
 					+ studyName
 					+ "' ++++++++++");

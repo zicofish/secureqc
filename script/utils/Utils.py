@@ -10,6 +10,10 @@ def convertToFixedPoint(floatNumber, width, offset):
     fixedPoint = int(floatNumber * (1 << offset)) & ((1 << width) - 1)
     return fixedPoint
 
+def convertToFloatPoint(fixedPointNumber, width, offset):
+    floatNumber = fixedPointNumber * 1.0 / (1 << offset)
+    return floatNumber
+
 def packToBase64(fixPointNumber, width):
     assert(width == 32 or width == 64) # We only handle these two widths
     if width == 32:
@@ -38,4 +42,4 @@ if __name__ == "__main__":
     print "c: ", a ^ b
     print "fp: ", fp
     
-    print "recover float: ", fp * 1.0 / (1 << offset)
+    print "recover float: ", convertToFloatPoint(fp, width, offset)

@@ -15,7 +15,7 @@ import circuits.BitonicSortLib;
 import flexsc.CompEnv;
 
 
-public class Secure_SE_N_Processor extends SecureMetaProcessor{
+public class Secure_SE_N_Processor extends MetaReader{
 	private static Logger logger = Logger.getLogger(Secure_SE_N_Processor.class.getName());
 	
 	protected Secure_SE_N_Processor(File study) {
@@ -51,7 +51,7 @@ public class Secure_SE_N_Processor extends SecureMetaProcessor{
 		@Override
 		public void prepareInput(CompEnv<T> gen) throws Exception {
 			studyName = args[0];
-			SecureMetaProcessor smp = new Secure_SE_N_Processor(new File(studyName));
+			MetaReader smp = new Secure_SE_N_Processor(new File(studyName));
 			logger.log(Level.INFO, "++++++++++ Generator: Preparing input from study file '"
 					+ studyName
 					+ "' ++++++++++");
@@ -110,7 +110,7 @@ public class Secure_SE_N_Processor extends SecureMetaProcessor{
 		@Override
 		public void prepareInput(CompEnv<T> gen) throws Exception {
 			studyName = args[0];
-			SecureMetaProcessor smp = new Secure_SE_N_Processor(new File(studyName));
+			MetaReader smp = new Secure_SE_N_Processor(new File(studyName));
 			logger.log(Level.INFO, "++++++++++ Evaluator: Preparing input from study file '"
 					+ studyName
 					+ "' ++++++++++");

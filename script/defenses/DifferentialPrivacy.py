@@ -57,7 +57,7 @@ def addGaussianNoises():
     mafs = [float(line.split()[1]) for line in caseMAF]
     sensitivity = 1.0/1000
     epsilon = 0.05
-    delta = 0.05
+    delta = 0.005
     dp = DifferentialPrivacy(sensitivity, epsilon, delta)
     noisy = dp.sanitize(mafs, "gaussian")
     noisy[noisy < 0.05] = 0.05
