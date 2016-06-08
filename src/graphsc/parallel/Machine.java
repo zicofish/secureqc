@@ -186,6 +186,7 @@ public class Machine {
 	}
 
 	public static <T> void main(String args[]) throws Exception {
+		
 		CommandLine cmd = processArgs(args);
 		int machines = Integer.parseInt(cmd.getOptionValue("totalGarblers"));
 		String machineConfigFile = cmd.getOptionValue("machineConfigFile");
@@ -205,6 +206,7 @@ public class Machine {
 			Flag.offline = Boolean.parseBoolean(cmd.getOptionValue("offline"));
 		}
 		machine.connect();
+		
 		String experiment = cmd.getOptionValue("program");
 		Class c = Class.forName(experiment);
 		machine.gadget = (Gadget) c.getConstructor(new Class[]{CompEnv.class, Machine.class})

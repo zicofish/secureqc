@@ -6,9 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
+
+import com.javamex.classmexer.MemoryUtil;
+
 import util.Utils;
 import ch.epfl.lca.genopri.secure.utils.Debugger;
 import ch.epfl.lca.genopri.secure.utils.FileUtils;
+import ch.epfl.lca.genopri.secure.utils.MemoryHeapMap;
 import ch.epfl.lca.genopri.secure.MetaReader;
 import circuits.arithmetic.IntegerLib;
 import flexsc.CompEnv;
@@ -28,20 +33,79 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 	/** Reference allele frequency file name */
 	String refName;
 	
+	/** These variables are kept as class variables only for the convenience of analyzing their memory consumption. */
+	public T[][]	aliceEafTData, bobEafTData, A_xor_B_EAF, refEAF, aliceNoises, bobNoises, eafPairs;
+	public T[] zeroEAF, oneEAF, prevPair, maxPair;
+	public boolean[][][] data;
+	public IntegerLib<T> intLib;
+	public DataGraphNode<T>[] nodes;
+	public boolean[][] fpNoises;
+	public double[] noises;
+	
 	public SecureParallel_EAF_Processor(CompEnv<T> env, Machine machine) {
 		super(env, machine);
-	}
-	
-	private boolean[][][] getInput(int inputLength, int garblerId, int processors) throws IOException {
-		System.out.println("inputLength: " + inputLength);
-		
 		String inputSpec = machine.getInput();
 		HashMap<String, String> specMap = FileUtils.getMapfromFile(inputSpec);
 		studyName = specMap.get("study");
 		refName = specMap.get("ref_af");
+	}
+	
+	/*
+	 * Too slow and consume too much memory when I use HashMap for the reference variants
+	 */
+//	private boolean[][][] getInput(int inputLength, int garblerId, int processors) throws IOException {
+//		System.out.println("inputLength: " + inputLength);
+//		
+//		MetaReader mr = new MetaReader(new File(studyName + (env.getParty().equals(Party.Alice) ? ".alice" : ".bob")));
+//		RefAFReader rar = new RefAFReader(new File(refName));
+//		HashMap<String, String[]> varMap = rar.getVariantMap();
+//		
+//		int[] eafs = new int[inputLength];
+//		boolean[][][] c = new boolean[2][inputLength][];
+//		int i = -1;
+//		while(mr.advanceLine()){
+//			i++;
+//			if(!(i >= garblerId * inputLength && i < (garblerId + 1) * inputLength))
+//				continue;
+//			int tmp = i - (garblerId * inputLength);
+//			eafs[tmp] = mr.getEAF();
+//			c[0][tmp] = Utils.fromInt(eafs[tmp], MetaReader.EAF_WIDTH);
+// 			if(varMap.containsKey(mr.getMarker())){
+// 				String[] var = varMap.get(mr.getMarker());
+// 				if(var[1].equals(mr.getEffectAllele()) && var[2].equals(mr.getNonEffectAllele()))
+// 					c[1][tmp] = Utils.fromFixPoint(
+// 							Double.valueOf(var[3]), 
+// 							MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
+// 				else if(var[1].equals(mr.getNonEffectAllele()) && var[2].equals(mr.getEffectAllele()))
+// 					c[1][tmp] = Utils.fromFixPoint(
+// 							1 - Double.valueOf(var[3]), 
+// 							MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
+// 				else
+// 					c[1][tmp] = null;
+// 			}
+// 			else
+// 				c[1][tmp] = null;
+//		}
+//		mr.closeStudy();
+//
+//		System.out.println("A_xor_B_EAF: " + MemoryUtil.deepMemoryUsageOf(varMap) / 1000000.0 + "Mbytes");
+//		
+//		return c;
+//	}
+
+	/**
+	 * @param inputLength
+	 * @param garblerId
+	 * @param processors
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean[][][] getInput(int inputLength, int garblerId, int processors) throws IOException {
+		System.out.println("inputLength: " + inputLength);
+		
 		MetaReader mr = new MetaReader(new File(studyName + (env.getParty().equals(Party.Alice) ? ".alice" : ".bob")));
 		RefAFReader rar = new RefAFReader(new File(refName));
-		HashMap<String, String[]> varMap = rar.getVariantMap();
+		String[][] varArray = rar.getVariantArray();
 		
 		int[] eafs = new int[inputLength];
 		boolean[][][] c = new boolean[2][inputLength][];
@@ -53,50 +117,66 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 			int tmp = i - (garblerId * inputLength);
 			eafs[tmp] = mr.getEAF();
 			c[0][tmp] = Utils.fromInt(eafs[tmp], MetaReader.EAF_WIDTH);
- 			if(varMap.containsKey(mr.getMarker())){
- 				String[] var = varMap.get(mr.getMarker());
- 				if(var[1].equals(mr.getEffectAllele()) && var[2].equals(mr.getNonEffectAllele()))
- 					c[1][tmp] = Utils.fromFixPoint(
- 							Double.valueOf(var[3]), 
- 							MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
- 				else if(var[1].equals(mr.getNonEffectAllele()) && var[2].equals(mr.getEffectAllele()))
- 					c[1][tmp] = Utils.fromFixPoint(
- 							1 - Double.valueOf(var[3]), 
- 							MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
- 				else
- 					c[1][tmp] = null;
+ 			if(!varArray[i][0].equals(mr.getMarker())){
+ 				Debugger.debug(Level.SEVERE, "The " + i + "-th variant of the reference is " + varArray[i][0]
+ 						+ ", but of the study is " + mr.getMarker());
+ 				System.exit(1);
  			}
- 			else
+ 			if(varArray[i][3].equals("-"))
  				c[1][tmp] = null;
+ 			else if(varArray[i][1].equals(mr.getEffectAllele()) && varArray[i][2].equals(mr.getNonEffectAllele()))
+				c[1][tmp] = Utils.fromFixPoint(
+						Double.valueOf(varArray[i][3]), 
+						MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
+			else if(varArray[i][1].equals(mr.getNonEffectAllele()) && varArray[i][2].equals(mr.getEffectAllele()))
+				c[1][tmp] = Utils.fromFixPoint(
+						1 - Double.valueOf(varArray[i][3]), 
+						MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
+			else
+				c[1][tmp] = null;
 		}
 		mr.closeStudy();
 
+		System.out.println("varArray: " + MemoryUtil.deepMemoryUsageOf(varArray) / 1000000.0 + "Mbytes");
+		
 		return c;
 	}
-
+	
 	@Override
 	public Object secureCompute() throws Exception {
 		long s = System.nanoTime();
 		
+		/*
+		 * Get input from file
+		 */
+		Debugger.debug(machine.getGarblerId(), env, "Getting input from study file '"+ studyName + "'");
+		long timing = System.currentTimeMillis();
+		
 		int inputLength = machine.getInputLength() / machine.getTotalMachines();
-		boolean[][][] data = getInput(inputLength, machine.getGarblerId(), machine.getTotalMachines());
+		data = getInput(inputLength, machine.getGarblerId(), machine.getTotalMachines());
 		
-		Debugger.debug(machine.getGarblerId(), env, "Preparing input from study file '"+ studyName + "'");
+		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
 		
-		T[][]	aliceEafTData = env.inputOfAlice(data[0]),
-				bobEafTData = env.inputOfBob(data[0]);
+		/*
+		 * Transform input into garble circuit signals
+		 */
 		
-		Debugger.debug(machine.getGarblerId(), env, "END preparing input from study file '"+ studyName + "'");
+		Debugger.debug(machine.getGarblerId(), env, "Transforming input into garble circuit signals");
 		
-		IntegerLib<T> intLib = new  IntegerLib<T>(env);
-		T[][] A_xor_B_EAF = env.newTArray(aliceEafTData.length, 0);
-		T[][] refEAF = env.newTArray(aliceEafTData.length, 0);
+		aliceEafTData = env.inputOfAlice(data[0]);
+		bobEafTData = env.inputOfBob(data[0]);
+		
+		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		
+		intLib = new  IntegerLib<T>(env);
+		A_xor_B_EAF = env.newTArray(aliceEafTData.length, 0);
+		refEAF = env.newTArray(aliceEafTData.length, 0);
 		
 		/*
 		 * XOR the two shares
 		 */
 		Debugger.debug(machine.getGarblerId(), env, "XORing EAF");
-		long timing = System.currentTimeMillis();
+		timing = System.currentTimeMillis();
 		for(int j = 0; j < A_xor_B_EAF.length; j++){
 			A_xor_B_EAF[j] = intLib.xor(aliceEafTData[j], bobEafTData[j]);
 			if(data[1][j] != null)
@@ -105,6 +185,9 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 				refEAF[j] = intLib.xor(aliceEafTData[j], bobEafTData[j]);
 		}
 		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		data = null;
+		aliceEafTData = null;
+		bobEafTData = null;
 		
 		/*
 		 * Add differential privacy noise to study EAF
@@ -114,14 +197,14 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 	    double epsilon = 0.1;
 	    double delta = 0.05;
 	    DifferentialPrivacy dp = new DifferentialPrivacy(sensitivity, epsilon, delta);
-	    double[] noises = dp.genNoises(A_xor_B_EAF.length, "gaussian");
-	    boolean[][] fpNoises = new boolean[noises.length][];
+	    noises = dp.genNoises(A_xor_B_EAF.length, "gaussian");
+	    fpNoises = new boolean[noises.length][];
 	    for(int j = 0; j < noises.length; j++)
 	    	fpNoises[j] = Utils.fromFixPoint(noises[j], MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
-	    T[][] aliceNoises = env.inputOfAlice(fpNoises),
-	    		bobNoises = env.inputOfBob(fpNoises);
-    	T[] zeroEAF = env.inputOfAlice(Utils.fromFixPoint(0, MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET)),
-    			oneEAF = env.inputOfAlice(Utils.fromFixPoint(1.0, MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET));
+	    aliceNoises = env.inputOfAlice(fpNoises);
+		bobNoises = env.inputOfBob(fpNoises);
+    	zeroEAF = env.inputOfAlice(Utils.fromFixPoint(0, MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET));
+    	oneEAF = env.inputOfAlice(Utils.fromFixPoint(1.0, MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET));
     	
 		for(int j = 0; j < A_xor_B_EAF.length; j++){
 			A_xor_B_EAF[j] = intLib.add(A_xor_B_EAF[j], aliceNoises[j]);
@@ -132,6 +215,11 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 			A_xor_B_EAF[j] = intLib.mux(A_xor_B_EAF[j], oneEAF, geqSignal);
 		}
 		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		aliceNoises = null;
+		bobNoises = null;
+		fpNoises = null;
+		noises = null;
+		dp = null;
 		
 		/*
 		 * Preserve only a predefined number of bits (i.e., the precision) for the EAF values,
@@ -140,12 +228,14 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		
 		Debugger.debug(machine.getGarblerId(), env, "Truncating precision of EAF values");
 		timing = System.currentTimeMillis();
-		T[][] eafPairs = env.newTArray(refEAF.length, EAF_preserved_bits * 2);
+		eafPairs = env.newTArray(refEAF.length, EAF_preserved_bits * 2);
 		for(int j = 0; j < A_xor_B_EAF.length; j++){
 			System.arraycopy(refEAF[j], MetaReader.EAF_WIDTH - EAF_preserved_bits, eafPairs[j], 0, EAF_preserved_bits);
 			System.arraycopy(A_xor_B_EAF[j], MetaReader.EAF_WIDTH - EAF_preserved_bits, eafPairs[j], EAF_preserved_bits, EAF_preserved_bits);
 		}
 		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		A_xor_B_EAF = null;
+		refEAF = null;
 		
 		/*
 		 * Sort the EAF value pairs
@@ -153,13 +243,14 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		Debugger.debug(machine.getGarblerId(), env, "Sorting EAF value pairs");
 		timing = System.currentTimeMillis();
 		
-		DataGraphNode<T>[] nodes = new DataGraphNode[eafPairs.length];
+		nodes = new DataGraphNode[eafPairs.length];
 		for (int i = 0; i < nodes.length; i++) {
 			nodes[i] = new DataGraphNode<T>(eafPairs[i], env);
 		}
+		eafPairs = null;
 		
 		new SortGadget<T>(env, machine)
-		.setInputs(nodes, DataGraphNode.getDataComparator(env, eafPairs[0].length))
+		.setInputs(nodes, DataGraphNode.getDataComparator(env, EAF_preserved_bits * 2))
 		.secureCompute();
 		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
 		
@@ -168,8 +259,8 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		 */
 		Debugger.debug(machine.getGarblerId(), env, "De-duplicating EAF value pairs");
 		timing = System.currentTimeMillis();
-		T[] prevPair = nodes[0].getData();
-		T[] maxPair = intLib.ones(nodes[0].getDataLength());
+		prevPair = nodes[0].getData();
+		maxPair = intLib.ones(nodes[0].getDataLength());
 		maxPair[nodes[0].getDataLength() - 1] = intLib.SIGNAL_ZERO;
 		for(int j = 1; j < nodes.length; j++){
 			T eqSignal = intLib.eq(prevPair, nodes[j].getData());
@@ -177,6 +268,8 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 			prevPair = intLib.mux(nodes[j].getData(), prevPair, eqSignal);
 		}
 		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		prevPair = null;
+		maxPair = null;
 		
 		/*
 		 * Move all duplicated items to the end
@@ -184,15 +277,23 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		Debugger.debug(machine.getGarblerId(), env, "Moving duplicated EAF value pairs to the end");
 		timing = System.currentTimeMillis();
 		new SortGadget<T>(env, machine)
-		.setInputs(nodes, DataGraphNode.getDataComparator(env, eafPairs[0].length))
+		.setInputs(nodes, DataGraphNode.getDataComparator(env, EAF_preserved_bits * 2))
 		.secureCompute();
 		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
 
 		print(machine.getGarblerId(), env, nodes);
+		nodes = null;
 		
 		long e = System.nanoTime();
 		System.out.println((env.getParty().equals(Party.Alice) ? "Garbler " : "Evaluator ") 
-				+ machine.getGarblerId() + ": P-Z runtime " + (e-s)/1e9 + "s");
+				+ machine.getGarblerId() + ": EAF runtime " + (e-s)/1e9 + "s");
+		
+		System.gc();
+		
+		MemoryHeapMap.printGeneralMemInfo();
+		
+		MemoryHeapMap.dump(this, new File((env.getParty().equals(Party.Alice) ? "Garbler_" : "Evaluator_") 
+				+ machine.getGarblerId() + "_memory_dump.txt" ));
 		
 		return null;
 	}
