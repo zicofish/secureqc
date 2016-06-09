@@ -66,7 +66,7 @@ def alignRefWithStudy(refAFName, studyName, IDIdx = 0, A1Idx = 3, A2Idx = 4):
     alignedRefAF = []
     for i in range(len(studyAF)):
         if not refAF.has_key(studyAF[i][0]):
-            alignedRefAF.append([studyAF[i][0], studyAF[i][1], studyAF[i][2], '-'])
+            alignedRefAF.append([studyAF[i][0], studyAF[i][1], studyAF[i][2], -1])
             continue
         refSNP = refAF.get(studyAF[i][0])
         if refSNP[0].upper() == studyAF[i][1] and \
@@ -76,7 +76,7 @@ def alignRefWithStudy(refAFName, studyName, IDIdx = 0, A1Idx = 3, A2Idx = 4):
             refSNP[1].upper() == studyAF[i][1]:
             alignedRefAF.append([studyAF[i][0], studyAF[i][1], studyAF[i][2], 1 - float(refSNP[2])])
         else:
-            alignedRefAF.append([studyAF[i][0], studyAF[i][1], studyAF[i][2], '-'])
+            alignedRefAF.append([studyAF[i][0], studyAF[i][1], studyAF[i][2], -1])
             logging.error('File content error: ' 'SNP ' + studyAF[i][0] + ' has different alleles in the reference and case.')
     outFile = open(refAFName[:refAFName.rfind("/") + 1] + "aligned_" + refAFName[refAFName.rfind("/") + 1 :], 'w')
     outFile.write(refHeader);
@@ -89,6 +89,8 @@ if __name__ == "__main__":
 #                  "../../data/reference/SNPID_to_ChrPosID.b36_v2.txt")
 #     combineHapmapAF("../../data/reference/", "CEU")
 #     combineHapmapAF("../../data/reference/", "CHB")
+#     alignRefWithStudy("../../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt",
+#                         "../../data/zk_jfellay/GIANT_toy/small/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.small.txt.alice")
     alignRefWithStudy("../../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt",
-                        "../../data/zk_jfellay/GIANT_toy/small/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.small.txt.alice")
+                        "../../data/zk_jfellay/GIANT_toy/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.txt.alice")
     

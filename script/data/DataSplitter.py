@@ -42,8 +42,8 @@ class DataSplitter(object):
         
     def splitFile(self, inFilePath):
         inFile = open(inFilePath)
-        outFileA = open(inFilePath[:-4] + ".A" + inFilePath[-4:], 'w')
-        outFileB = open(inFilePath[:-4] + ".B" + inFilePath[-4:], 'w')
+        outFileA = open(inFilePath + ".alice", 'w')
+        outFileB = open(inFilePath + ".bob", 'w')
         # Skip header line
         headerLine = inFile.readline()
         outFileA.write(headerLine)
@@ -73,4 +73,5 @@ class DataSplitter(object):
     
 if __name__ == "__main__":
     splitter = DataSplitter()
-    splitter.splitFile("../../data/zk_jfellay/GIANT_toy/small/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.small.txt")
+#     splitter.splitFile("../../data/zk_jfellay/GIANT_toy/small/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.small.txt")
+    splitter.splitFile("../../data/zk_jfellay/GIANT_toy/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.txt")

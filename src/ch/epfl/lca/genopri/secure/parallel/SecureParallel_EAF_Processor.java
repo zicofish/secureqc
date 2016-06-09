@@ -6,9 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-
-import com.javamex.classmexer.MemoryUtil;
 
 import util.Utils;
 import ch.epfl.lca.genopri.secure.utils.Debugger;
@@ -92,60 +89,61 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 //		
 //		return c;
 //	}
+	
 
-	/**
-	 * @param inputLength
-	 * @param garblerId
-	 * @param processors
-	 * @return
-	 * @throws IOException
-	 */
 	private boolean[][][] getInput(int inputLength, int garblerId, int processors) throws IOException {
 		System.out.println("inputLength: " + inputLength);
 		
 		MetaReader mr = new MetaReader(new File(studyName + (env.getParty().equals(Party.Alice) ? ".alice" : ".bob")));
 		RefAFReader rar = new RefAFReader(new File(refName));
-		String[][] varArray = rar.getVariantArray();
 		
-		int[] eafs = new int[inputLength];
 		boolean[][][] c = new boolean[2][inputLength][];
+		char refAllele, otherAllele, effectAllele, nonEffectAllele;
+		double refAlleleFreq = -1;
 		int i = -1;
-		while(mr.advanceLine()){
+		while(mr.advanceLine() && rar.advanceLine()){
 			i++;
-			if(!(i >= garblerId * inputLength && i < (garblerId + 1) * inputLength))
+			if(i >= (garblerId + 1) * inputLength)
+				break;
+			if(i < garblerId * inputLength)
 				continue;
 			int tmp = i - (garblerId * inputLength);
-			eafs[tmp] = mr.getEAF();
-			c[0][tmp] = Utils.fromInt(eafs[tmp], MetaReader.EAF_WIDTH);
- 			if(!varArray[i][0].equals(mr.getMarker())){
- 				Debugger.debug(Level.SEVERE, "The " + i + "-th variant of the reference is " + varArray[i][0]
- 						+ ", but of the study is " + mr.getMarker());
- 				System.exit(1);
- 			}
- 			if(varArray[i][3].equals("-"))
+			c[0][tmp] = Utils.fromInt(mr.getEAF(), MetaReader.EAF_WIDTH);
+// 			if(!varArray[i][0].equals(mr.getMarker())){
+// 				Debugger.debug(Level.SEVERE, "The " + i + "-th variant of the reference is " + varArray[i][0]
+// 						+ ", but of the study is " + mr.getMarker());
+// 				System.exit(1);
+// 			}
+			refAllele = rar.getRefAllele();
+			otherAllele = rar.getOtherAllele();
+			effectAllele = mr.getEffectAllele();
+			nonEffectAllele = mr.getNonEffectAllele();
+			refAlleleFreq = rar.getRefAlleleFreq();
+ 			if(refAlleleFreq < 0)
  				c[1][tmp] = null;
- 			else if(varArray[i][1].equals(mr.getEffectAllele()) && varArray[i][2].equals(mr.getNonEffectAllele()))
+ 			else if(refAllele == effectAllele && otherAllele == nonEffectAllele)
 				c[1][tmp] = Utils.fromFixPoint(
-						Double.valueOf(varArray[i][3]), 
+						refAlleleFreq, 
 						MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
-			else if(varArray[i][1].equals(mr.getNonEffectAllele()) && varArray[i][2].equals(mr.getEffectAllele()))
+			else if(refAllele == nonEffectAllele && otherAllele == effectAllele)
 				c[1][tmp] = Utils.fromFixPoint(
-						1 - Double.valueOf(varArray[i][3]), 
+						1 - refAlleleFreq, 
 						MetaReader.EAF_WIDTH, MetaReader.EAF_OFFSET);
 			else
 				c[1][tmp] = null;
 		}
-		mr.closeStudy();
-
-		System.out.println("varArray: " + MemoryUtil.deepMemoryUsageOf(varArray) / 1000000.0 + "Mbytes");
+		mr.close();
+		rar.close();
 		
 		return c;
 	}
 	
 	@Override
 	public Object secureCompute() throws Exception {
-		long s = System.nanoTime();
+		Debugger.setLogFile("./log/" + (env.getParty().equals(Party.Alice) ? "Garbler_" : "Evaluator_") 
+				+ machine.getGarblerId() + "_EAF.log");
 		
+		long s = System.nanoTime();
 		/*
 		 * Get input from file
 		 */
@@ -285,10 +283,7 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		nodes = null;
 		
 		long e = System.nanoTime();
-		System.out.println((env.getParty().equals(Party.Alice) ? "Garbler " : "Evaluator ") 
-				+ machine.getGarblerId() + ": EAF runtime " + (e-s)/1e9 + "s");
-		
-		System.gc();
+		Debugger.debug(machine.getGarblerId(), env, "Total runtime: EAF runtime " + (e-s)/1e9 + "s");
 		
 		MemoryHeapMap.printGeneralMemInfo();
 		

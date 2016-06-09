@@ -1,7 +1,10 @@
 package ch.epfl.lca.genopri.secure;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -51,19 +54,20 @@ public class MetaReader implements GenomicFileCheck{
 	};
 	
 	/** A reader for the current study file */
-	private Scanner studyScanner = null;
+//	private Scanner studyScanner = null;
+	private BufferedReader br = null;
 	
 	/** The current row separated into the corresponding columns */
 	private String[] lineFields = null;
 	
-	public MetaReader(File study){
+	public MetaReader(File study) throws IOException{
 		try {
-			studyScanner = new Scanner(study);
+			br = new BufferedReader(new FileReader(study));
 		} catch (FileNotFoundException e) {
 			Debugger.debug(Level.SEVERE, "Cannot find the study file '" + study + "'.");
 			System.exit(1);
 		}
-		String[] headers = studyScanner.nextLine().split("\\s+");
+		String[] headers = br.readLine().split("\\s+");
 		if(!matchHeaders(expectedHeaders, headers)){
 			Debugger.debug(Level.SEVERE, "The headers of study '" + study + "' does not match the expected headers.");
 			System.exit(1);
@@ -73,10 +77,13 @@ public class MetaReader implements GenomicFileCheck{
 	/** 
 	 * Read the next valid row. A row is valid if and only if it has expected number of fields.
 	 * @return true if there is a valid row to be read.
+	 * @throws IOException 
 	 */
-	public boolean advanceLine(){
-		while(studyScanner.hasNextLine()){
-			String line = studyScanner.nextLine();
+	public boolean advanceLine() throws IOException{
+		while(true){
+			String line = br.readLine();
+			if(line == null)
+				break;
 			lineFields = line.split("\\s+");
 			if(lineFields.length == 0) continue;	// SKIP empty lines
 			if(lineFields.length != expectedHeaders.length){
@@ -90,9 +97,10 @@ public class MetaReader implements GenomicFileCheck{
 	
 	/**
 	 * Close the study
+	 * @throws IOException 
 	 */
-	public void closeStudy(){
-		studyScanner.close();
+	public void close() throws IOException{
+		br.close();
 	}
 	
 	/**
@@ -105,15 +113,15 @@ public class MetaReader implements GenomicFileCheck{
 	/**
 	 * Effect allele
 	 */
-	public String getEffectAllele(){
-		return lineFields[3];
+	public char getEffectAllele(){
+		return lineFields[3].charAt(0);
 	}
 	
 	/**
 	 * Non-effect allele
 	 */
-	public String getNonEffectAllele(){
-		return lineFields[4];
+	public char getNonEffectAllele(){
+		return lineFields[4].charAt(0);
 	}
 	
 	/**
