@@ -1,0 +1,1 @@
+ch.epfl.lca.genopri.secure.parallel.SecureParallel_EAF_Processor 1024 4 ./input_spec/study1.txt
