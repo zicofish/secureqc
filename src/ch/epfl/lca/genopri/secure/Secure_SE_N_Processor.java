@@ -1,6 +1,7 @@
 package ch.epfl.lca.genopri.secure;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Security;
@@ -18,7 +19,9 @@ import flexsc.CompEnv;
 public class Secure_SE_N_Processor extends MetaReader{
 	private static Logger logger = Logger.getLogger(Secure_SE_N_Processor.class.getName());
 	
-	protected Secure_SE_N_Processor(File study) {
+	private static int testSize = 10000;
+	
+	protected Secure_SE_N_Processor(File study) throws IOException {
 		super(study);
 	}
 	
@@ -57,13 +60,15 @@ public class Secure_SE_N_Processor extends MetaReader{
 					+ "' ++++++++++");
 			
 			Nmax = 0.0;
-			ArrayList<Integer> standardErrors = new ArrayList<>(APPROX_SIZE);
-			while(smp.advanceLine()){
+			ArrayList<Integer> standardErrors = new ArrayList<>(testSize);
+			int tmp = 0;
+			while(smp.advanceLine() && tmp < testSize){
 				Double tmpN = smp.getN();
 				if(Nmax < tmpN) Nmax = tmpN;
 				standardErrors.add(smp.getSE());
+				tmp++;
 			}
-			smp.closeStudy();
+			smp.close();
 			boolean[][] temp = new boolean[standardErrors.size()][];
 			for(int i = 0; i < standardErrors.size(); i++)
 				temp[i] = Utils.fromInt(standardErrors.get(i), SE_WIDTH);
@@ -116,13 +121,15 @@ public class Secure_SE_N_Processor extends MetaReader{
 					+ "' ++++++++++");
 			
 			Nmax = 0.0;
-			ArrayList<Integer> standardErrors = new ArrayList<>(APPROX_SIZE);
-			while(smp.advanceLine()){
+			ArrayList<Integer> standardErrors = new ArrayList<>(testSize);
+			int tmp = 0;
+			while(smp.advanceLine() && tmp < testSize){
 				Double tmpN = smp.getN();
 				if(Nmax < tmpN) Nmax = tmpN;
 				standardErrors.add(smp.getSE());
+				tmp++;
 			}
-			smp.closeStudy();
+			smp.close();
 			boolean[][] temp = new boolean[standardErrors.size()][];
 			for(int i = 0; i < standardErrors.size(); i++)
 				temp[i] = Utils.fromInt(standardErrors.get(i), SE_WIDTH);

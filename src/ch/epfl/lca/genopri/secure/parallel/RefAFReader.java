@@ -5,11 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 
 import ch.epfl.lca.genopri.secure.GenomicFileCheck;
@@ -38,7 +34,7 @@ public class RefAFReader implements GenomicFileCheck{
 	/** The current row separated into the corresponding columns */
 	private String[] lineFields = null;
 	
-	RefAFReader(File file) throws IOException{
+	public RefAFReader(File file) throws IOException{
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {

@@ -109,11 +109,6 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 				continue;
 			int tmp = i - (garblerId * inputLength);
 			c[0][tmp] = Utils.fromInt(mr.getEAF(), MetaReader.EAF_WIDTH);
-// 			if(!varArray[i][0].equals(mr.getMarker())){
-// 				Debugger.debug(Level.SEVERE, "The " + i + "-th variant of the reference is " + varArray[i][0]
-// 						+ ", but of the study is " + mr.getMarker());
-// 				System.exit(1);
-// 			}
 			refAllele = rar.getRefAllele();
 			otherAllele = rar.getOtherAllele();
 			effectAllele = mr.getEffectAllele();
@@ -160,6 +155,7 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		 */
 		
 		Debugger.debug(machine.getGarblerId(), env, "Transforming input into garble circuit signals");
+		timing = System.currentTimeMillis();
 		
 		aliceEafTData = env.inputOfAlice(data[0]);
 		bobEafTData = env.inputOfBob(data[0]);
@@ -191,6 +187,7 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		 * Add differential privacy noise to study EAF
 		 */
 		Debugger.debug(machine.getGarblerId(), env, "Adding differential privacy noises");
+		timing = System.currentTimeMillis();
 		double sensitivity = 1.0 / 1000;
 	    double epsilon = 0.1;
 	    double delta = 0.05;
@@ -287,8 +284,8 @@ public class SecureParallel_EAF_Processor<T> extends Gadget<T>{
 		
 		MemoryHeapMap.printGeneralMemInfo();
 		
-		MemoryHeapMap.dump(this, new File((env.getParty().equals(Party.Alice) ? "Garbler_" : "Evaluator_") 
-				+ machine.getGarblerId() + "_memory_dump.txt" ));
+//		MemoryHeapMap.dump(this, new File((env.getParty().equals(Party.Alice) ? "Garbler_" : "Evaluator_") 
+//				+ machine.getGarblerId() + "_memory_dump.txt" ));
 		
 		return null;
 	}

@@ -45,7 +45,7 @@ public class SecureParallel_SE_N_Processor<T> extends Gadget<T>{
 				continue;
 			standardErrors[i - (garblerId * inputLength)] = mr.getSE();
 		}
-		mr.closeStudy();
+		mr.close();
 		
 		boolean[][] c = new boolean[standardErrors.length][];
 		for(i = 0; i < standardErrors.length; ++i) {
@@ -56,44 +56,70 @@ public class SecureParallel_SE_N_Processor<T> extends Gadget<T>{
 
 	@Override
 	public Object secureCompute() throws Exception {
+		Debugger.setLogFile("./log/" + (env.getParty().equals(Party.Alice) ? "Garbler_" : "Evaluator_") 
+				+ machine.getGarblerId() + "_SE_N.log");
+		
 		long s = System.nanoTime();
+		
+		/*
+		 * Get input from file
+		 */
+		Debugger.debug(machine.getGarblerId(), env, "Getting input from study file '"+ studyName + "'");
+		long timing = System.currentTimeMillis();
 		
 		int inputLength = machine.getInputLength() / machine.getTotalMachines();
 		boolean[][] data = getInput(inputLength, machine.getGarblerId(), machine.getTotalMachines());
 		
-		Debugger.debug(machine.getGarblerId(), env, "Preparing input from study file '"+ studyName + "'");
+		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		
+		/*
+		 * Transform input into garble circuit signals
+		 */
+		Debugger.debug(machine.getGarblerId(), env, "Transforming input into garble circuit signals");
+		timing = System.currentTimeMillis();
 		
 		T[][] aliceTData, bobTData;
-		if(env.getParty().equals(Party.Alice)){
-			aliceTData = (T[][]) env.inputOfAlice(data);
-			bobTData = (T[][]) env.inputOfBob(new boolean[data.length][MetaReader.SE_WIDTH]);
-		}
-		else{
-			aliceTData = (T[][]) env.inputOfAlice(new boolean[data.length][MetaReader.SE_WIDTH]);
-			bobTData = (T[][]) env.inputOfBob(data);
-		}
+		aliceTData = (T[][]) env.inputOfAlice(data);
+		bobTData = (T[][]) env.inputOfBob(data);
 		
-		Debugger.debug(machine.getGarblerId(), env, "END preparing input from study file '"+ studyName + "'");
+		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		
+		/*
+		 * XOR the two shares
+		 */
+		Debugger.debug(machine.getGarblerId(), env, "XORing standard error shares");
+		timing = System.currentTimeMillis();
 		
 		CircuitLib<T> lib = new  CircuitLib<T>(env);
 		T[][] A_xor_B = env.newTArray(data.length, MetaReader.SE_WIDTH);
 		for(int j = 0; j < data.length; j++)
 			A_xor_B[j] = lib.xor(aliceTData[j], bobTData[j]);
+		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		aliceTData = bobTData = null;
+		
+		/*
+		 * Sorting the standard erros
+		 */
+		Debugger.debug(machine.getGarblerId(), env, "Sorting standard errors");
+		timing = System.currentTimeMillis();
 		
 		DataGraphNode<T>[] nodes = new DataGraphNode[data.length];
 		for (int i = 0; i < nodes.length; i++) {
 			nodes[i] = new DataGraphNode<T>(A_xor_B[i], env);
 		}
+		A_xor_B = null;
 		
 		new SortGadget<T>(env, machine)
 		.setInputs(nodes, DataGraphNode.getDataComparator(env, MetaReader.SE_WIDTH))
 		.secureCompute();
 		
+		Debugger.debug(machine.getGarblerId(), env, "Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds");
+		
 		print(machine.getGarblerId(), env, nodes);
+		nodes = null;
 		
 		long e = System.nanoTime();
-		System.out.println((env.getParty().equals(Party.Alice) ? "Garbler " : "Evaluator ") 
-				+ machine.getGarblerId() + ": SE-N runtime " + (e-s)/1e9 + "s");
+		Debugger.debug(machine.getGarblerId(), env, "Total runtime: SE-N runtime " + (e-s)/1e9 + "s");
 		
 		return null;
 	}

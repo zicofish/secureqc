@@ -1,6 +1,7 @@
 package ch.epfl.lca.genopri.secure;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -23,7 +24,9 @@ public class Secure_P_Z_Processor extends MetaReader{
 	
 	private static final int Z_preserved_bits = 10;
 	
-	protected Secure_P_Z_Processor(File study) {
+	private static int testSize = 10000;
+	
+	protected Secure_P_Z_Processor(File study) throws IOException {
 		super(study);
 	}
 	
@@ -53,6 +56,8 @@ public class Secure_P_Z_Processor extends MetaReader{
 			zStats[j] = sortLib.absolute(fpLib.div(A_xor_B_BETA[j], A_xor_B_SE[j]));
 		}
 		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
+		A_xor_B_BETA = null;
+		A_xor_B_SE = null;
 		
 		/*
 		 * Preserve only a predefined number of bits (i.e., the precision) for the P values
@@ -110,6 +115,8 @@ public class Secure_P_Z_Processor extends MetaReader{
 			System.arraycopy(A_xor_B_P[j], 0, pz[j], zStats[j].length, A_xor_B_P[j].length);
 		}
 		logger.log(Level.INFO, "============== Timing:  " + (System.currentTimeMillis() - timing) / 1000.0 +  " seconds ==============");
+		A_xor_B_P = null;
+		zStats = null;
 		
 		/*
 		 * Sort the p-z value pairs
@@ -172,14 +179,16 @@ public class Secure_P_Z_Processor extends MetaReader{
 					+ studyName
 					+ "' ++++++++++");
 			
-			ArrayList<Integer> BETAs = new ArrayList<>(APPROX_SIZE), SEs = new ArrayList<>(APPROX_SIZE);
-			ArrayList<Long> Ps = new ArrayList<>(APPROX_SIZE);
-			while(smp.advanceLine()){
+			ArrayList<Integer> BETAs = new ArrayList<>(testSize), SEs = new ArrayList<>(testSize);
+			ArrayList<Long> Ps = new ArrayList<>(testSize);
+			int tmp = 0;
+			while(smp.advanceLine() && tmp < testSize){
 				BETAs.add(smp.getBETA());
 				SEs.add(smp.getSE());
 				Ps.add(smp.getP());
+				tmp++;
 			}
-			smp.closeStudy();
+			smp.close();
 			boolean[][] temp = new boolean[BETAs.size()][];
 			for(int i = 0; i < temp.length; i++)
 				temp[i] = Utils.fromLong(Ps.get(i), P_WIDTH);
@@ -215,7 +224,7 @@ public class Secure_P_Z_Processor extends MetaReader{
 				boolean[] plainPZ = gen.outputToAlice(pz[i]);
 				Double zStat = Utils.toFixPoint(Arrays.copyOfRange(plainPZ, 0, SE_WIDTH), SE_OFFSET);
 				Double pValue = Utils.toFixPoint(Arrays.copyOfRange(plainPZ, SE_WIDTH, SE_WIDTH + P_WIDTH), P_OFFSET);
-				System.out.println(pValue + "------" + nd.cumulativeProbability(-zStat)*2);
+//				System.out.println(pValue + "------" + nd.cumulativeProbability(-zStat)*2);
 			}
 //			logger.log(Level.INFO, "========== Generator: median SE is " + Utils.toFixPoint(plainMedian, 24) + " ==========");
 		}
@@ -243,14 +252,16 @@ public class Secure_P_Z_Processor extends MetaReader{
 					+ studyName
 					+ "' ++++++++++");
 			
-			ArrayList<Integer> BETAs = new ArrayList<>(APPROX_SIZE), SEs = new ArrayList<>(APPROX_SIZE);
-			ArrayList<Long> Ps = new ArrayList<>(APPROX_SIZE);
-			while(smp.advanceLine()){
+			ArrayList<Integer> BETAs = new ArrayList<>(testSize), SEs = new ArrayList<>(testSize);
+			ArrayList<Long> Ps = new ArrayList<>(testSize);
+			int tmp = 0;
+			while(smp.advanceLine() && tmp < testSize){
 				BETAs.add(smp.getBETA());
 				SEs.add(smp.getSE());
 				Ps.add(smp.getP());
+				tmp++;
 			}
-			smp.closeStudy();
+			smp.close();
 			boolean[][] temp = new boolean[BETAs.size()][];
 			for(int i = 0; i < temp.length; i++)
 				temp[i] = Utils.fromLong(Ps.get(i), P_WIDTH);

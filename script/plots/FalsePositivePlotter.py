@@ -44,8 +44,11 @@ class FalsePositivePlotter(GroupOfClasseseBoxPlotter):
         ax.set_ylabel("False positive rate", fontsize=20)
         ax.tick_params(axis='y', labelsize=20)
         ax.set_xticklabels(map(lambda x: '$10^{'+str(x)+'}$', ax.get_xticks()), fontsize=20)
-        ax.legend(bbox_to_anchor=(0.998, 0.65),
-              fontsize=18)
+        ax.legend(bbox_to_anchor=(1.05, 1.),
+                  loc='upper left',
+                  ncol=1,
+                  borderaxespad=0.,
+                  fontsize=18)
 #         ax.set_xticks(numpy.log10(self.numOfSNPs))
 #         ax.set_xticklabels(map(str, self.numOfSNPs))
             

@@ -33,27 +33,27 @@ class DataDeviationPlotter(object):
         ax.tick_params(axis="y", labelsize=20)
         ax.set_xlim(left=0.6)
         ax.set_xticks(numpy.array(range(1, len(self.deviations) + 1)) + 0.3)
-        ax.set_xticklabels(['$\epsilon=0.1$', '$\epsilon=0.05$', '$\epsilon=0.01$'], fontsize=20)
+        ax.set_xticklabels(tickLabels, fontsize=20)
         
         plt.show()
         
 if __name__ == "__main__":
     plotter = DataDeviationPlotter()
-    plotter.loadData(["../../data/simulated/caseMAF_clear.txt",
-                      "../../data/simulated/caseMAF_dp0.1.txt",
-                      "../../data/simulated/caseMAF_dp0.05.txt",
-                      "../../data/simulated/caseMAF_dp0.01.txt"])
 #     plotter.loadData(["../../data/simulated/caseMAF_clear.txt",
-#                       "../../data/simulated/caseMAF_dp0.1_delta0.05.txt",
-#                       "../../data/simulated/caseMAF_dp0.1_delta0.01.txt",
-#                       "../../data/simulated/caseMAF_dp0.1_delta0.005.txt",
-#                       "../../data/simulated/caseMAF_dp0.1_delta0.001.txt",
-#                       "../../data/simulated/caseMAF_dp0.05_delta0.05.txt",
-#                       "../../data/simulated/caseMAF_dp0.05_delta0.01.txt",
-#                       "../../data/simulated/caseMAF_dp0.05_delta0.005.txt",
-#                       "../../data/simulated/caseMAF_dp0.05_delta0.001.txt"])
+#                       "../../data/simulated/caseMAF_dp0.1.txt",
+#                       "../../data/simulated/caseMAF_dp0.05.txt",
+#                       "../../data/simulated/caseMAF_dp0.01.txt"])
+    plotter.loadData(["../../data/simulated/caseMAF_clear.txt",
+                      "../../data/simulated/caseMAF_dp0.1_delta0.05.txt",
+                      "../../data/simulated/caseMAF_dp0.1_delta0.01.txt",
+                      "../../data/simulated/caseMAF_dp0.1_delta0.005.txt",
+                      "../../data/simulated/caseMAF_dp0.1_delta0.001.txt",
+                      "../../data/simulated/caseMAF_dp0.05_delta0.05.txt",
+                      "../../data/simulated/caseMAF_dp0.05_delta0.01.txt",
+                      "../../data/simulated/caseMAF_dp0.05_delta0.005.txt",
+                      "../../data/simulated/caseMAF_dp0.05_delta0.001.txt"])
     plotter.plot("Privacy parameter", "Average distance from true MAF",
-                 [r'$\epsilon=0.1, \delta=0.05$', r'$\epsilon=0.1, \delta=0.01$', 
-                  r'$\epsilon=0.1, \delta=0.005$', r'$\epsilon=0.1, \delta=0.001$',
-                  r'$\epsilon=0.05, \delta=0.05$', r'$\epsilon=0.05, \delta=0.01$',
-                  r'$\epsilon=0.05, \delta=0.005$', r'$\epsilon=0.05, \delta=0.001$'])
+                 ['$\epsilon=0.1$\n$\delta=0.05$', '$\epsilon=0.1$\n$\delta=0.01$', 
+                  '$\epsilon=0.1$\n$\delta=0.005$', '$\epsilon=0.1$\n$\delta=0.001$',
+                  '$\epsilon=0.05$\n$\delta=0.05$', '$\epsilon=0.05$\n$\delta=0.01$',
+                  '$\epsilon=0.05$\n$\delta=0.005$', '$\epsilon=0.05$\n$\delta=0.001$'])
