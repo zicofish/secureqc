@@ -83,6 +83,7 @@ SCRIPT
         done
         ;;
         # Clear ports
+    "clear_ports")
         for ((i=0; i<=`expr ${#ips[@]} - 1`; i++))
         do
             kill \$(ps awux | grep 'java .*parallel' | grep -v 'grep' | awk '{print $2}')
