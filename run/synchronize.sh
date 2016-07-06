@@ -64,6 +64,7 @@ SCRIPT
         do
             ssh $user@${ips[i]} 'bash -s'  <<SCRIPT
             mkdir -p secureqc/run/log/
+            mkdir -p secureqc/run/out/
             cd secureqc/run
             kill \$(ps -ef | grep 'java .*parallel' | grep -v 'grep' | awk '{print \$2}')
             for ((j=0; j<${garblers[i]}; j++))
