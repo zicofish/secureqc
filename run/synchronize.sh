@@ -70,13 +70,13 @@ SCRIPT
             for ((j=0; j<${garblers[i]}; j++))
             do
                 garblerID=\$(($garblerCounter + \$j))
-                (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$garblerID  -garblerPort \$((35000 + \$garblerID)) -isGen true -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 50000 -offline false -input ${input_spec} > foo.out 2> foo.err &)
+                (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$garblerID  -garblerPort \$((35000 + \$garblerID)) -isGen true -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 50000 -offline false -input ${input_spec} > out/foo.out.\$garblerID 2> out/foo.err.\$garblerID &)
             done
             
             for ((j=0; j<${evaluators[i]}; j++))
             do
                 evaluatorID=\$(($evaluatorCounter + \$j))
-                (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$evaluatorID  -garblerPort \$((35000 + \$evaluatorID)) -isGen false -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 55000 -offline false -input ${input_spec} > foo.out 2> foo.err &)
+                (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$evaluatorID  -garblerPort \$((35000 + \$evaluatorID)) -isGen false -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 55000 -offline false -input ${input_spec} > out/foo.out.\$evaluatorID 2> out/foo.err.\$evaluatorID &)
             done            
 SCRIPT
             garblerCounter=$(($garblerCounter + ${garblers[i]}))
