@@ -79,7 +79,7 @@ SCRIPT
             done            
 SCRIPT
             garblerCounter=$(($garblerCounter + ${garblers[i]}))
-            evaluatorCpunter=$(($evaluatorCounter + ${evaluators[i]}))
+            evaluatorCounter=$(($evaluatorCounter + ${evaluators[i]}))
         done
         ;;
         # Clear ports
