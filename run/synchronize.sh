@@ -65,7 +65,7 @@ SCRIPT
             ssh $user@${ips[i]} 'bash -s'  <<SCRIPT
             mkdir -p secureqc/run/log/
             cd secureqc/run
-            eval \$(ps awux | grep 'java .*parallel' | grep -v 'grep' | awk '{print "kill -9 " $2}')
+            kill \$(ps awux | grep 'java .*parallel' | grep -v 'grep' | awk '{print $2}')
             for ((j=0; j<${garblers[i]}; j++))
             do
                 garblerID=\$(($garblerCounter + \$j))
@@ -80,6 +80,12 @@ SCRIPT
 SCRIPT
             garblerCounter=$(($garblerCounter + ${garblers[i]}))
             evaluatorCpunter=$(($evaluatorCounter + ${evaluators[i]}))
+        done
+        ;;
+        # Clear ports
+        for ((i=0; i<=`expr ${#ips[@]} - 1`; i++))
+        do
+            kill \$(ps awux | grep 'java .*parallel' | grep -v 'grep' | awk '{print $2}')
         done
         ;;
 esac
