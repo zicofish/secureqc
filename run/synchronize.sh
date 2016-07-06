@@ -75,7 +75,7 @@ SCRIPT
             for ((j=0; j<${evaluators[i]}; j++))
             do
                 evaluatorID=\$(($evaluatorCounter + \$j))
-                (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$evaluatorID  -garblerPort \$((35000 + \$garblerID)) -isGen false -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 55000 -offline false -input ${input_spec} > foo.out 2> foo.err &)
+                (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$evaluatorID  -garblerPort \$((35000 + \$evaluatorID)) -isGen false -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 55000 -offline false -input ${input_spec} > foo.out 2> foo.err &)
             done            
 SCRIPT
             garblerCounter=$(($garblerCounter + ${garblers[i]}))
