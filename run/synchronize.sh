@@ -1,8 +1,8 @@
 #!/bin/bash
 user='root'
 ips=(10.156.12.1 10.156.12.2 10.156.12.3 10.156.12.4 10.156.12.5 10.156.12.7 10.156.12.8 10.156.12.9 10.156.12.10 10.156.12.11 10.156.12.12 10.156.12.13 10.156.12.14 10.156.12.15 10.156.12.16 10.156.12.17)
-garblers=(8, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0)
-evaluators=(0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 8, 8, 8, 8, 8)
+garblers=(8 8 8 8 8 8 8 8 0 0 0 0 0 0 0 0)
+evaluators=(0 0 0 0 0 0 0 0 8 8 8 8 8 8 8 8)
 program="${1}"
 qc_protocol='ch.epfl.lca.genopri.secure.parallel.SecureParallel_EAF_Processor'
 run_size=262144
@@ -66,13 +66,13 @@ SCRIPT
             mkdir -p secureqc/run/log/
             cd secureqc/run
             eval \$(ps awux | grep 'java .*parallel' | grep -v 'grep' | awk '{print "kill -9 " $2}')
-            for (j=0; j<${garblers[i]}; j++)
+            for ((j=0; j<${garblers[i]}; j++))
             do
                 garblerID=\$(($garblerCounter + \$j))
                 (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$garblerID  -garblerPort \$((35000 + \$garblerID)) -isGen true -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 50000 -offline false -input ${input_spec} > foo.out 2> foo.err &)
             done
             
-            for (j=0; j<${evaluators[i]}; j++)
+            for ((j=0; j<${evaluators[i]}; j++))
             do
                 evaluatorID=\$(($evaluatorCounter + \$j))
                 (java -Xmx${jvm_mem} -javaagent:../lib/classmexer.jar -cp ../bin/:../lib/*:../lib/commons-math3-3.6/* graphsc.parallel.Machine -garblerId \$evaluatorID  -garblerPort \$((35000 + \$garblerID)) -isGen false -inputLength ${run_size} -program ${qc_protocol} -totalGarblers ${garbler_num} -machineConfigFile 00 -mode REAL -peerBasePort 55000 -offline false -input ${input_spec} > foo.out 2> foo.err &)
