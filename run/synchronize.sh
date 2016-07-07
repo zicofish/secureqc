@@ -8,7 +8,7 @@ qc_protocol='ch.epfl.lca.genopri.secure.parallel.SecureParallel_EAF_Processor'
 run_size=1048576
 input_spec='./input_spec/study1.txt'
 garbler_num=64
-jvm_mem='3776m'
+jvm_mem='2048m'
 
 case ${program} in
     "init_git")
