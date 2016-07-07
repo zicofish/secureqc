@@ -5,10 +5,10 @@ garblers=(8 8 8 8 8 8 8 8 0 0 0 0 0 0 0 0)
 evaluators=(0 0 0 0 0 0 0 0 8 8 8 8 8 8 8 8)
 program="${1}"
 qc_protocol='ch.epfl.lca.genopri.secure.parallel.SecureParallel_EAF_Processor'
-run_size=262144
+run_size=1048576
 input_spec='./input_spec/study1.txt'
 garbler_num=64
-jvm_mem='1536m'
+jvm_mem='3776m'
 
 case ${program} in
     "init_git")
