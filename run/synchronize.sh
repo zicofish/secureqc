@@ -92,4 +92,11 @@ SCRIPT
 SCRIPT
         done
         ;;
+    "get_log")
+        # Get the timing log from each machine 
+        for ((i=0; i<=`expr ${#ips[@]} - 1`; i++))
+        do
+            scp $user@${ips[i]}:~/secureqc/run/log/* ~/merge_output/
+        done
+        ;;
 esac
