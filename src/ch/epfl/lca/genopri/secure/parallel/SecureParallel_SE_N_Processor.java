@@ -4,10 +4,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 
 import util.Utils;
 import ch.epfl.lca.genopri.secure.MetaReader;
 import ch.epfl.lca.genopri.secure.utils.Debugger;
+import ch.epfl.lca.genopri.secure.utils.FileUtils;
 import circuits.CircuitLib;
 import flexsc.CompEnv;
 import flexsc.Party;
@@ -26,12 +28,14 @@ public class SecureParallel_SE_N_Processor<T> extends Gadget<T>{
 	
 	public SecureParallel_SE_N_Processor(CompEnv<T> env, Machine machine) {
 		super(env, machine);
+		String inputSpec = machine.getInput();
+		HashMap<String, String> specMap = FileUtils.getMapfromFile(inputSpec);
+		studyName = specMap.get("study");
 	}
 	
 	private boolean[][] getInput(int inputLength, int garblerId, int processors) throws IOException {
 		System.out.println("inputLength: " + inputLength);
 		
-		studyName = machine.getInput();
 		MetaReader mr = new MetaReader(new File(studyName + (env.getParty().equals(Party.Alice) ? ".alice" : ".bob")));
 		
 		int[] standardErrors = new int[inputLength];
