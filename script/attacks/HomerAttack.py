@@ -50,10 +50,10 @@ def performAttack(numOfVictims, numOfSNPs, sanitizationSuffix):
         stat = attack.getAttackStatistic(numOfSNPs, victimSeq)
         testStats.append(stat)
     
-    file = open("../../data/simulated/caseAttackStats_" + str(numOfSNPs) + "SNPs_" + sanitizationSuffix + ".txt", 'w')
+    file = open("../../data/simulated/attackStats/caseAttackStats_" + sanitizationSuffix + "_" +  str(numOfSNPs) + "SNPs.txt", 'w')
     file.write('\n'.join([str(x) for x in caseStats]))
     file.close()
-    file = open("../../data/simulated/testAttackStats_" + str(numOfSNPs) + "SNPs_" + sanitizationSuffix + ".txt", 'w')
+    file = open("../../data/simulated/attackStats/testAttackStats_" + sanitizationSuffix + "_" +  str(numOfSNPs) + "SNPs.txt", 'w')
     file.write('\n'.join([str(x) for x in testStats]))
     file.close()
 
