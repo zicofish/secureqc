@@ -21,7 +21,9 @@ def pairCmp(pair1, pair2):
             return 1
         return 0
 
-def sim_eaf(refAFName, studyAFName, outName, IDIdx = 0, A1Idx = 1, A2Idx = 2, AF1Idx = 3):
+def sim_eaf(refAFName, studyAFName, outName, 
+            IDIdx = 0, A1Idx = 1, A2Idx = 2, AF1Idx = 3, 
+            epsilon=0.1, delta=0.05, precision=7):
     #===========================================================================
     # reference allele frequencies
     #===========================================================================
@@ -61,9 +63,6 @@ def sim_eaf(refAFName, studyAFName, outName, IDIdx = 0, A1Idx = 1, A2Idx = 2, AF
     # add noise
     #===========================================================================
     sensitivity = 1.0 / 1000
-    epsilon = 0.1
-    delta = 0.05
-#     delta = 0.05 * 0.05 / 1.25
     dp = DifferentialPrivacy(sensitivity, epsilon, delta)
     noisy = dp.sanitize(pairs[:, 1], "gaussian")
     noisy = dp.sanitize(noisy, "gaussian") # try adding twice the noise
@@ -76,7 +75,6 @@ def sim_eaf(refAFName, studyAFName, outName, IDIdx = 0, A1Idx = 1, A2Idx = 2, AF
     #===========================================================================
     width = 32
     offset = 30
-    precision = 4
     for i in range(len(pairs)):
         fp1 = Utils.convertToFixedPoint(pairs[i][0], width, offset)
         fp1 &= ((1 << (precision + width - offset)) - 1) << (offset - precision)
@@ -99,7 +97,7 @@ def sim_eaf(refAFName, studyAFName, outName, IDIdx = 0, A1Idx = 1, A2Idx = 2, AF
     #===========================================================================
     # output pairs
     #===========================================================================
-    outFile = open(outName, 'w')
+    outFile = open(outName + "_pairs" + str(len(newPairs)) + ".txt", 'w')
     outFile.write("\n".join(["\t".join(map(lambda u: str(Utils.convertToFloatPoint(u, width, offset)) , p)) for p in newPairs]))
     outFile.close()
     
@@ -174,11 +172,22 @@ def sim_pz(studyName, outName, PIdx = -2, SEIdx = -3, BETAIdx = -4):
     outFile.write("\n".join(["\t".join(map(str , p)) for p in newPairs]))
     outFile.close()
     
-   
+
     
 if __name__ == "__main__":
-#     sim_eaf("../../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt",
-#             "../../data/simulated/eaf_patterns/a.txt",
-#             "../../data/output/eaf_plot_mpc_pattern_a_test.txt")
-    sim_pz("../../data/zk_jfellay/GIANT_toy/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.txt", 
-           "../../data/output/pz_plot_mpc.txt")
+    epsilons = [0.1, 0.05]
+    deltas = [0.05, 0.01, 0.005, 0.001]
+    precisions = [5, 9]
+    for epsilon in epsilons:
+        for delta in deltas:
+            for precision in precisions: 
+                sim_eaf("../../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt",
+                        "../../data/simulated/eaf_patterns/e.txt",
+                        "../../data/output/eaf_plot_mpc_pattern_e_epsilon" + str(epsilon) 
+                        + "_delta" + str(delta)
+                        + "_precision" + str(precision),
+                        epsilon = epsilon,
+                        delta = delta,
+                        precision = precision)
+#     sim_pz("../../data/zk_jfellay/GIANT_toy/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.txt", 
+#            "../../data/output/pz_plot_mpc.txt")

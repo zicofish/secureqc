@@ -81,5 +81,5 @@ if __name__ == "__main__":
 
 #     plotter.loadRefCase("../../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt",
 #                           "../../data/simulated/eaf_patterns/e.txt")
-    plotter.loadPairs("../../data/output/eaf_plot_mpc_pattern_c.txt")
+    plotter.loadPairs("../../data/output/eaf_plot_mpc_pattern_e_epsilon0.05_delta0.005_precision9_pairs155331.txt")
     plotter.plot()

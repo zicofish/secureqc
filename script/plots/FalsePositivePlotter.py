@@ -40,6 +40,8 @@ class FalsePositivePlotter(GroupOfClasseseBoxPlotter):
                 threshold = bp['caps'][0].get_ydata()[0]
                 false_positives.append(int((self.data[j][:, 1] >= threshold).sum()) * 1.0 / len(self.data[j][:, 1]))
             ax.plot(numpy.log10(self.numOfSNPs), false_positives, marker=self.plotMarkers[i], c=self.plotColors[i], label=self.plotLabels[i])
+            if i > 0 and i < 5:
+                print self.plotLabels[i], false_positives[0], false_positives[2], false_positives[4]
         ax.set_xlabel("Number of SNVs", fontsize=20)
         ax.set_ylabel("False positive rate", fontsize=20)
         ax.tick_params(axis='y', labelsize=20)
@@ -49,48 +51,11 @@ class FalsePositivePlotter(GroupOfClasseseBoxPlotter):
                   ncol=1,
                   borderaxespad=0.,
                   fontsize=18)
+        fig.savefig("./test.pdf", format="pdf")
 #         ax.set_xticks(numpy.log10(self.numOfSNPs))
 #         ax.set_xticklabels(map(str, self.numOfSNPs))
             
 if __name__ == "__main__":
-#     plotter = FalsePositivePlotter([
-#                                     [
-#                                         ["../../data/simulated/caseAttackStats_1000SNPs_clear.txt", "../../data/simulated/testAttackStats_1000SNPs_clear.txt"],
-#                                         ["../../data/simulated/caseAttackStats_5000SNPs_clear.txt", "../../data/simulated/testAttackStats_5000SNPs_clear.txt"],
-#                                         ["../../data/simulated/caseAttackStats_10000SNPs_clear.txt", "../../data/simulated/testAttackStats_10000SNPs_clear.txt"],
-#                                         ["../../data/simulated/caseAttackStats_50000SNPs_clear.txt", "../../data/simulated/testAttackStats_50000SNPs_clear.txt"],
-#                                         ["../../data/simulated/caseAttackStats_100000SNPs_clear.txt", "../../data/simulated/testAttackStats_100000SNPs_clear.txt"],
-#                                         ["../../data/simulated/caseAttackStats_500000SNPs_clear.txt", "../../data/simulated/testAttackStats_500000SNPs_clear.txt"],
-#                                         ["../../data/simulated/caseAttackStats_1000000SNPs_clear.txt", "../../data/simulated/testAttackStats_1000000SNPs_clear.txt"]
-#                                     ],
-#                                     [
-#                                         ["../../data/simulated/caseAttackStats_1000SNPs_dp0.1.txt", "../../data/simulated/testAttackStats_1000SNPs_dp0.1.txt"],
-#                                         ["../../data/simulated/caseAttackStats_5000SNPs_dp0.1.txt", "../../data/simulated/testAttackStats_5000SNPs_dp0.1.txt"],
-#                                         ["../../data/simulated/caseAttackStats_10000SNPs_dp0.1.txt", "../../data/simulated/testAttackStats_10000SNPs_dp0.1.txt"],
-#                                         ["../../data/simulated/caseAttackStats_50000SNPs_dp0.1.txt", "../../data/simulated/testAttackStats_50000SNPs_dp0.1.txt"],
-#                                         ["../../data/simulated/caseAttackStats_100000SNPs_dp0.1.txt", "../../data/simulated/testAttackStats_100000SNPs_dp0.1.txt"],
-#                                         ["../../data/simulated/caseAttackStats_500000SNPs_dp0.1.txt", "../../data/simulated/testAttackStats_500000SNPs_dp0.1.txt"],
-#                                         ["../../data/simulated/caseAttackStats_1000000SNPs_dp0.1.txt", "../../data/simulated/testAttackStats_1000000SNPs_dp0.1.txt"]
-#                                     ],
-#                                     [
-#                                         ["../../data/simulated/caseAttackStats_1000SNPs_dp0.05.txt", "../../data/simulated/testAttackStats_1000SNPs_dp0.05.txt"],
-#                                         ["../../data/simulated/caseAttackStats_5000SNPs_dp0.05.txt", "../../data/simulated/testAttackStats_5000SNPs_dp0.05.txt"],
-#                                         ["../../data/simulated/caseAttackStats_10000SNPs_dp0.05.txt", "../../data/simulated/testAttackStats_10000SNPs_dp0.05.txt"],
-#                                         ["../../data/simulated/caseAttackStats_50000SNPs_dp0.05.txt", "../../data/simulated/testAttackStats_50000SNPs_dp0.05.txt"],
-#                                         ["../../data/simulated/caseAttackStats_100000SNPs_dp0.05.txt", "../../data/simulated/testAttackStats_100000SNPs_dp0.05.txt"],
-#                                         ["../../data/simulated/caseAttackStats_500000SNPs_dp0.05.txt", "../../data/simulated/testAttackStats_500000SNPs_dp0.05.txt"],
-#                                         ["../../data/simulated/caseAttackStats_1000000SNPs_dp0.05.txt", "../../data/simulated/testAttackStats_1000000SNPs_dp0.05.txt"]
-#                                     ],
-#                                     [
-#                                         ["../../data/simulated/caseAttackStats_1000SNPs_dp0.01.txt", "../../data/simulated/testAttackStats_1000SNPs_dp0.01.txt"],
-#                                         ["../../data/simulated/caseAttackStats_5000SNPs_dp0.01.txt", "../../data/simulated/testAttackStats_5000SNPs_dp0.01.txt"],
-#                                         ["../../data/simulated/caseAttackStats_10000SNPs_dp0.01.txt", "../../data/simulated/testAttackStats_10000SNPs_dp0.01.txt"],
-#                                         ["../../data/simulated/caseAttackStats_50000SNPs_dp0.01.txt", "../../data/simulated/testAttackStats_50000SNPs_dp0.01.txt"],
-#                                         ["../../data/simulated/caseAttackStats_100000SNPs_dp0.01.txt", "../../data/simulated/testAttackStats_100000SNPs_dp0.01.txt"],
-#                                         ["../../data/simulated/caseAttackStats_500000SNPs_dp0.01.txt", "../../data/simulated/testAttackStats_500000SNPs_dp0.01.txt"],
-#                                         ["../../data/simulated/caseAttackStats_1000000SNPs_dp0.01.txt", "../../data/simulated/testAttackStats_1000000SNPs_dp0.01.txt"]
-#                                     ]
-#                                     ])
     plotter = FalsePositivePlotter([
                                 [
                                     ["../../data/simulated/attackStats/caseAttackStats_1000SNPs_clear.txt", "../../data/simulated/attackStats/testAttackStats_1000SNPs_clear.txt"],

@@ -3,7 +3,6 @@ Created on May 11, 2016
 
 @author: zhihuang
 '''
-import matplotlib.pyplot as plt
 import numpy
 from plots.Plotter import Plotter
 

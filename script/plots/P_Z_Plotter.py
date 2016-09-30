@@ -33,7 +33,8 @@ class P_Z_Plotter(PairPlotter):
     
 if __name__ == "__main__":
     plotter = P_Z_Plotter()
-    plotter.loadData("../../data/zk_jfellay/GIANT_toy/small/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.small.txt")
+#     plotter.loadData("../../data/zk_jfellay/GIANT_toy/CLEAN.AGES.HEIGHT.MEN.GT50.20100914.txt")
+    plotter.loadData("../../data/output/pz_plot_mpc.txt", "secure")
 #     plotter.loadData("../../run/out/P_Z_1024.out", "secure")
     plotter.plot(r'$-\log_{10}(P.ztest)$', r'$-\log_{10}(P)$')
     
