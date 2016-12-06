@@ -53,8 +53,11 @@ class EAF_Plotter(object):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         h = ax.scatter(self.pairs[:, 0], self.pairs[:, 1], marker='o', s = 5, c='blue', lw = 0)
-        ax.set_xlabel("EAF .reference", fontsize=16)
-        ax.set_ylabel("EAF .study", fontsize=16)
+#         ax.set_xlabel("EAF .reference", fontsize=16)
+#         ax.set_ylabel("EAF .study", fontsize=16)
+        
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
         
         plt.show()
         
@@ -79,7 +82,7 @@ if __name__ == "__main__":
 #                         "../../data/zk_jfellay/GIANT_toy/DESIR.HEIGHT.MEN.LE50.20120307.txt",
 #                         0, 3, 4, 5)
 
-#     plotter.loadRefCase("../../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt",
-#                           "../../data/simulated/eaf_patterns/e.txt")
-    plotter.loadPairs("../../data/output/eaf_plot_mpc_pattern_e_epsilon0.05_delta0.005_precision9_pairs155331.txt")
+    plotter.loadRefCase("../../data/reference/AlleleFreq_HapMap_CEU_phase3.2_nr.b36_fwd.txt",
+                          "../../data/simulated/eaf_patterns/e.txt")
+#     plotter.loadPairs("../../data/output/eaf_plot_mpc_pattern_e_epsilon0.05_delta0.005_precision9_pairs155331.txt")
     plotter.plot()

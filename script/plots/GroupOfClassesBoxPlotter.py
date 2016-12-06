@@ -64,11 +64,13 @@ class GroupOfClasseseBoxPlotter(Plotter):
         
         ax.set_xlabel(xLabel, fontsize=20)
         ax.set_ylabel(yLabel, fontsize=20)
-        
+         
         ax.tick_params(axis='y', labelsize=20)
         ax.set_xticks(numpy.array(range(0, 
                          self.numOfGroups*(self.numOfClasses + groupSpacing), self.numOfClasses + groupSpacing)) + 0.5)
         ax.set_xticklabels(groupLabels, fontsize=18)
+#         ax.set_xticklabels([])
+#         ax.set_yticklabels([])
         return bps
         
 if __name__ == "__main__":

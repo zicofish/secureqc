@@ -40,8 +40,7 @@ class FalsePositivePlotter(GroupOfClasseseBoxPlotter):
                 threshold = bp['caps'][0].get_ydata()[0]
                 false_positives.append(int((self.data[j][:, 1] >= threshold).sum()) * 1.0 / len(self.data[j][:, 1]))
             ax.plot(numpy.log10(self.numOfSNPs), false_positives, marker=self.plotMarkers[i], c=self.plotColors[i], label=self.plotLabels[i])
-            if i > 0 and i < 5:
-                print self.plotLabels[i], false_positives[0], false_positives[2], false_positives[4]
+#             print false_positives
         ax.set_xlabel("Number of SNVs", fontsize=20)
         ax.set_ylabel("False positive rate", fontsize=20)
         ax.tick_params(axis='y', labelsize=20)
@@ -54,7 +53,7 @@ class FalsePositivePlotter(GroupOfClasseseBoxPlotter):
         fig.savefig("./test.pdf", format="pdf")
 #         ax.set_xticks(numpy.log10(self.numOfSNPs))
 #         ax.set_xticklabels(map(str, self.numOfSNPs))
-            
+
 if __name__ == "__main__":
     plotter = FalsePositivePlotter([
                                 [
@@ -139,5 +138,33 @@ if __name__ == "__main__":
                                     ["../../data/simulated/attackStats/caseAttackStats_1000000SNPs_dp0.05_delta0.001.txt", "../../data/simulated/attackStats/testAttackStats_1000000SNPs_dp0.05_delta0.001.txt"]
                                 ]
                                 ])
+#     plotter = FalsePositivePlotter([
+#                                 [
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.01_752SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.01_752SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.001_829SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.001_829SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.01_10024SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.01_10024SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.001_11084SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.001_11084SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.01_108856SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.01_108856SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.001_119132SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.001_119132SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.05_687SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.05_687SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.005_769SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.005_769SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.05_9128SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.05_9128SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.005_10355SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.005_10355SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.05_99617SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.05_99617SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.1_delta0.005_112151SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.1_delta0.005_112151SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.01_1008SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.01_1008SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.001_1067SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.001_1067SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.01_14095SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.01_14095SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.001_15282SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.001_15282SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.01_150914SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.01_150914SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.001_164068SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.001_164068SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.05_923SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.05_923SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.005_1037SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.005_1037SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.05_12840SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.05_12840SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.005_14535SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.005_14535SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.05_137365SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.05_137365SNPs.txt"],
+#                                     ["../../data/simulated/attackStats/caseAttackStats_dp0.05_delta0.005_155331SNPs.txt", "../../data/simulated/attackStats/testAttackStats_dp0.05_delta0.005_155331SNPs.txt"],                                    
+#                                 ]
+#                                     ])
     plotter.plot()
     plotter.show()

@@ -27,13 +27,16 @@ class DataDeviationPlotter(object):
         ax = fig.add_subplot(1, 1, 1)
 #         h = ax.plot(range(len(self.deviations)), self.deviations, marker='o', c='blue')
         ax.bar(range(1, len(self.deviations) + 1), self.deviations, width = 0.6, color = 'gray')
-        ax.set_xlabel(label1, fontsize=20)
-        ax.set_ylabel(label2, fontsize=20)
+        ax.set_xlabel(label1, fontsize=25)
+        ax.set_ylabel(label2, fontsize=25)
         
-        ax.tick_params(axis="y", labelsize=20)
+        ax.tick_params(axis="y", labelsize=25)
         ax.set_xlim(left=0.6)
         ax.set_xticks(numpy.array(range(1, len(self.deviations) + 1)) + 0.3)
         ax.set_xticklabels(tickLabels, fontsize=20)
+        
+#         ax.set_xticklabels([])
+#         ax.set_yticklabels([])
         
         plt.show()
         
