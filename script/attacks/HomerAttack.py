@@ -68,11 +68,13 @@ def calFalsePositive(caseStatsName, testStatsName):
     
     
 if __name__ == "__main__":
-    import sys
-    arg = sys.argv
-    performAttack(1000, int(arg[1]), arg[2])
+    # For cluster
+#     import sys
+#     arg = sys.argv
+#     performAttack(1000, int(arg[1]), arg[2])
+    # End for cluster
     
-#     performAttack(3, 10, "")
+    performAttack(3, 10, "clear")
 #     print calFalsePositive("../../data/simulated/caseAttackStats.txt", "../../data/simulated/testAttackStats.txt")
 #     print calFalsePositive("../../data/simulated/caseAttackStats_dp0.1.txt", "../../data/simulated/testAttackStats_dp0.1.txt")
 #     print calFalsePositive("../../data/simulated/caseAttackStats_dp0.05.txt", "../../data/simulated/testAttackStats_dp0.05.txt")
