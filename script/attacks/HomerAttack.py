@@ -65,6 +65,10 @@ def calFalsePositive(caseStatsName, testStatsName):
     falsePositives = numpy.zeros(numpy.shape(testStats))
     falsePositives[testStats >= min(caseStats)] = 1
     return sum(falsePositives) / len(testStats)
+
+def fromDStatisticToPValues(DFileName):
+    DFile = open(DFileName)
+    
     
     
 if __name__ == "__main__":
