@@ -66,10 +66,6 @@ def calFalsePositive(caseStatsName, testStatsName):
     falsePositives[testStats >= min(caseStats)] = 1
     return sum(falsePositives) / len(testStats)
 
-def fromDStatisticToPValues(DFileName):
-    DFile = open(DFileName)
-    
-    
     
 if __name__ == "__main__":
     # For cluster

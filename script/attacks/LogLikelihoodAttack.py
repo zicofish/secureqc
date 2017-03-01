@@ -5,7 +5,7 @@ Created on May 8, 2016
 '''
 from attacks.Attack import Attack
 import math
-import sys
+from scipy.stats import norm
 
 class LogLikelihoodAttack(Attack):
     '''
@@ -61,12 +61,30 @@ def performAttack(numOfVictims, numOfSNPs, sanitizationSuffix):
     file = open("../../data/simulated/attackStats/LLR_testAttackStats_" + sanitizationSuffix + "_" +  str(numOfSNPs) + "SNPs.txt", 'w')
     file.write('\n'.join([str(x) for x in testStats]))
     file.close()
-
+    
+def LStats2PValues(poolSize, numOfSNPs, sanitizationSuffix, group):
+    statFile = open("../../data/simulated/attackStats/LLR_" + group + "AttackStats_" + sanitizationSuffix + "_" + str(numOfSNPs) + "SNPs.txt")
+    pvalueFile = open("../../data/simulated/attackStats/LLR_" + group + "PValues_" + sanitizationSuffix + "_" + str(numOfSNPs) + "SNPs.txt", 'w')
+    pValues = []
+    gaussian = norm(loc = -numOfSNPs / (2*poolSize), scale = math.sqrt(numOfSNPs / poolSize))
+    for line in statFile.readlines():
+        pValues.append(gaussian.sf(float(line)))
+    pvalueFile.write('\n'.join([str(x) for x in pValues]))
+    pvalueFile.close()
+    
 
 if __name__ == "__main__":
     # For cluster
-    import sys
-    arg = sys.argv
-    performAttack(1000, int(arg[1]), arg[2])
+#     import sys
+#     arg = sys.argv
+#     performAttack(1000, int(arg[1]), arg[2])
     # End for cluster
     #performAttack(3, 10, "dp0.1")
+    numOfSNPsList = [1000, 5000, 10000, 50000, 100000, 500000, 1000000]
+    saniList = ["clear", "dp0.1_delta0.01", "dp0.1_delta0.05", "dp0.1_delta0.001", "dp0.1_delta0.005",
+                "dp0.05_delta0.01", "dp0.05_delta0.001", "dp0.05_delta0.05", "dp0.05_delta0.005"]
+    groupList = ['case', 'test']
+    for numOfSNPs in numOfSNPsList:
+        for sani in saniList:
+            for group in groupList:
+                LStats2PValues(1000, numOfSNPs, sani, group)

@@ -46,6 +46,7 @@ class GroupOfClasseseBoxPlotter(Plotter):
                     maxDatum = tmp
                 self.data[i].append(raw)
                 f.close()
+#             self.data[i] = (numpy.mat(self.data[i]).transpose()) # No normalization
             self.data[i] = (numpy.mat(self.data[i]).transpose() - minDatum) / (maxDatum - minDatum)
     
     def plot(self, classColors, groupLabels, xLabel, yLabel):
